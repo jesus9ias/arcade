@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# CDK output
+cdk.out/
+
+# Environment files (sensitive — never commit)
+.env
+.env.*
+!.env.example
+
+# CDK / TypeScript compiled output
+*.js
+*.d.ts
+
+# Allow config files that legitimately use these extensions
+!*.config.js
+!*.config.d.ts

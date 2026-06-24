@@ -1,0 +1,16 @@
+{
+  "name": "arcade",
+  "private": true,
+  "version": "0.0.0",
+  "description": "arcade — monorepo of static browser minigames sharing infra constructs and conventions",
+  "workspaces": [
+    "infra",
+    "gato/frontend",
+    "gato/infra",
+    "snake/frontend",
+    "snake/infra"
+  ],
+  "engines": {
+    "node": "24"
+  }
+}
