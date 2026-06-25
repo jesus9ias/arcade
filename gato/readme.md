@@ -32,7 +32,7 @@ npm run build --workspace gato/frontend      # production build → gato/fronten
 The game shows a random meme on game over. Claude Code created the folder structure and loader; **you provide the images**:
 
 1. Drop image files into `frontend/public/memes/win/`, `frontend/public/memes/lose/`, and `frontend/public/memes/neutral/`.
-2. List their filenames in `frontend/src/lib/constants/memes.ts` under the matching category.
+2. Run `npm run gen:memes --workspace gato/frontend` to regenerate `frontend/src/lib/memes/catalog.json` (it scans the folders above and lists the filenames per category).
 
 Category per outcome: human win (HVM) → `win`; machine win (HVM) → `lose`; draw, or any HVH result → `neutral`. If a category has no images, the game shows a non-blocking notice instead of a meme.
 

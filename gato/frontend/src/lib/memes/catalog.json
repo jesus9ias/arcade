@@ -1,0 +1,22 @@
+{
+  "win": [
+    "win1.jpg",
+    "win2.webp",
+    "win3.webp"
+  ],
+  "lose": [
+    "lose1.png",
+    "lose2.jpg",
+    "lose3.jpg",
+    "lose4.jpg",
+    "lose5.jpeg",
+    "lose6.jpg",
+    "lose7.webp",
+    "lose8.webp"
+  ],
+  "neutral": [
+    "353826.jpg",
+    "neutral1.jpeg",
+    "neutral2.jpg"
+  ]
+}

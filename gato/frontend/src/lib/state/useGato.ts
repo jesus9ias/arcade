@@ -17,7 +17,7 @@ import type {
   PlayerSymbol,
   Theme as ThemeType,
 } from '../constants';
-import { MEME_BASE_PATH, MEME_CATALOG } from '../constants/memes';
+import { MEME_BASE_PATH } from '../constants/memes';
 import { createInitialBoard } from '../engine/board';
 import { getBestMove } from '../engine/minimax';
 import { applyMove, confirmSetup, startNewGame } from './transitions';
@@ -25,6 +25,8 @@ import type { GameState } from './transitions';
 import { buildMatchRecord } from '../history/history';
 import type { MatchRecord } from '../history/history';
 import { getMemeCategory, pickRandomMeme } from '../memes/memes';
+import type { MemeCatalog } from '../memes/memes';
+import memeCatalog from '../memes/catalog.json';
 import { validateHistory, validatePrefs } from '../validation/localStorage';
 import type { GatoPrefs } from '../validation/localStorage';
 
@@ -222,7 +224,7 @@ export function useGato(): GatoController {
         humanSymbol: game.humanSymbol,
         mode: game.mode,
       });
-      const filename = pickRandomMeme(MEME_CATALOG, category);
+      const filename = pickRandomMeme(memeCatalog as MemeCatalog, category);
       if (filename) {
         setMeme({ src: `${MEME_BASE_PATH}/${category}/${filename}` });
         setMemeError(false);
