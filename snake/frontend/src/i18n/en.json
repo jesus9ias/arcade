@@ -1,1 +1,58 @@
-{}
+{
+  "game.title": "Snake",
+  "game.start": "Start",
+  "game.newGame": "New game",
+  "game.pause": "Pause",
+  "game.resume": "Resume",
+  "game.boost": "Boost",
+  "game.score": "Score",
+  "game.fruits": "Fruits",
+  "game.level": "Level",
+  "game.paused": "Paused",
+  "game.gameOver": "Game over",
+
+  "mode.label": "Game mode",
+  "mode.simple": "Simple",
+  "mode.versus": "Versus",
+
+  "players.you": "You",
+  "players.machine": "Machine",
+
+  "result.scoreLine": "Score: {{score}}",
+  "result.levelLine": "Level reached: {{level}}",
+  "result.survivorBonus": "Survivor bonus +50%",
+  "result.youWon": "You scored higher!",
+  "result.machineWon": "The machine scored higher",
+  "result.tie": "It's a tie",
+
+  "help.title": "How to play",
+  "help.open": "How to play",
+  "help.goal": "Eat fruit fast — its value drops the longer it waits. Don't hit the walls, the obstacles, or yourself.",
+  "help.turnCw": "Right arrow / tap right: turn clockwise",
+  "help.turnCcw": "Left arrow / tap left: turn counter-clockwise",
+  "help.pause": "P: pause / resume",
+  "help.boost": "A: boost on/off (faster, riskier)",
+  "help.versus": "Versus: the machine plays its own snake. If either snake dies the game ends and the survivor gets +50%.",
+  "help.close": "Close",
+
+  "history.title": "Game history",
+  "history.tabSimple": "Simple",
+  "history.tabVersus": "Versus",
+  "history.empty": "No games yet. Go play!",
+  "history.clear": "Clear history",
+  "history.cancel": "Cancel",
+  "history.clearConfirm": "Delete all game history? This cannot be undone.",
+  "history.colDate": "Date",
+  "history.colLevel": "Level",
+  "history.colScore": "Score",
+  "history.colYou": "You",
+  "history.colMachine": "Machine",
+  "history.prevPage": "Previous",
+  "history.nextPage": "Next",
+  "history.pageStatus": "Page {{current}} of {{total}}",
+
+  "nav.language": "Language",
+  "nav.theme": "Theme",
+
+  "error.invalidStorage": "Some saved data was invalid and has been reset."
+}

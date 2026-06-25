@@ -1,1 +1,58 @@
-{}
+{
+  "game.title": "Víbora",
+  "game.start": "Empezar",
+  "game.newGame": "Juego nuevo",
+  "game.pause": "Pausa",
+  "game.resume": "Reanudar",
+  "game.boost": "Acelerar",
+  "game.score": "Puntos",
+  "game.fruits": "Frutas",
+  "game.level": "Nivel",
+  "game.paused": "En pausa",
+  "game.gameOver": "Fin del juego",
+
+  "mode.label": "Modo de juego",
+  "mode.simple": "Simple",
+  "mode.versus": "Versus",
+
+  "players.you": "Tú",
+  "players.machine": "Máquina",
+
+  "result.scoreLine": "Puntos: {{score}}",
+  "result.levelLine": "Nivel alcanzado: {{level}}",
+  "result.survivorBonus": "Bono de sobreviviente +50%",
+  "result.youWon": "¡Hiciste más puntos!",
+  "result.machineWon": "La máquina hizo más puntos",
+  "result.tie": "Empate",
+
+  "help.title": "Cómo jugar",
+  "help.open": "Cómo jugar",
+  "help.goal": "Come fruta rápido — su valor baja mientras más tarda. No choques con las paredes, los obstáculos ni contigo mismo.",
+  "help.turnCw": "Flecha derecha / toca a la derecha: gira en sentido horario",
+  "help.turnCcw": "Flecha izquierda / toca a la izquierda: gira en sentido antihorario",
+  "help.pause": "P: pausa / reanudar",
+  "help.boost": "A: acelerar sí/no (más rápido, más riesgo)",
+  "help.versus": "Versus: la máquina mueve su propia víbora. Si cualquiera muere, el juego termina y el sobreviviente gana +50%.",
+  "help.close": "Cerrar",
+
+  "history.title": "Historial de juegos",
+  "history.tabSimple": "Simple",
+  "history.tabVersus": "Versus",
+  "history.empty": "Aún no hay juegos. ¡A jugar!",
+  "history.clear": "Borrar historial",
+  "history.cancel": "Cancelar",
+  "history.clearConfirm": "¿Borrar todo el historial? Esto no se puede deshacer.",
+  "history.colDate": "Fecha",
+  "history.colLevel": "Nivel",
+  "history.colScore": "Puntos",
+  "history.colYou": "Tú",
+  "history.colMachine": "Máquina",
+  "history.prevPage": "Anterior",
+  "history.nextPage": "Siguiente",
+  "history.pageStatus": "Página {{current}} de {{total}}",
+
+  "nav.language": "Idioma",
+  "nav.theme": "Tema",
+
+  "error.invalidStorage": "Algunos datos guardados eran inválidos y se restablecieron."
+}
