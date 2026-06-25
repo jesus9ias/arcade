@@ -2,6 +2,7 @@
   "game.title": "Snake",
   "game.start": "Start",
   "game.newGame": "New game",
+  "game.restart": "Restart",
   "game.pause": "Pause",
   "game.resume": "Resume",
   "game.boost": "Boost",
@@ -32,6 +33,7 @@
   "help.turnCcw": "Left arrow / tap left: turn counter-clockwise",
   "help.pause": "P: pause / resume",
   "help.boost": "A: boost on/off (faster, riskier)",
+  "help.enter": "Enter: start / restart the game",
   "help.versus": "Versus: the machine plays its own snake. If either snake dies the game ends and the survivor gets +50%.",
   "help.close": "Close",
 

@@ -15,6 +15,7 @@ export function HelpModal({ onClose }: HelpModalProps) {
         <li>{t('help.turnCcw')}</li>
         <li>{t('help.pause')}</li>
         <li>{t('help.boost')}</li>
+        <li>{t('help.enter')}</li>
         <li>{t('help.versus')}</li>
       </ul>
       <button type="button" className="button button--primary" onClick={onClose}>

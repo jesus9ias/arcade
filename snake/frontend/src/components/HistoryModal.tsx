@@ -5,6 +5,28 @@ import { groupByMode } from '../lib/history/history';
 import type { GameRecord } from '../lib/history/history';
 import { Modal } from './Modal';
 
+function StarIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="14"
+      height="14"
+      aria-hidden="true"
+      style={{ display: 'inline', verticalAlign: 'middle', marginLeft: '4px', flexShrink: 0 }}
+    >
+      <path
+        d="M12 2.5 l2.6 6.1 6.6 .5 -5 4.3 1.6 6.4 -5.8 -3.5 -5.8 3.5 1.6 -6.4 -5 -4.3 6.6 -.5 z"
+        fill="#ffd24a"
+        stroke="#e0a93f"
+        strokeWidth="0.8"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="11" r="1.6" fill="#fff2b0" opacity="0.85" />
+    </svg>
+  );
+}
+
 interface HistoryModalProps {
   records: GameRecord[];
   onClose: () => void;
@@ -71,8 +93,16 @@ export function HistoryModal({ records, onClose, onClear }: HistoryModalProps) {
                 <tr key={record.id}>
                   <td>{new Date(record.date).toLocaleString()}</td>
                   <td>{record.level}</td>
-                  <td>{record.playerScore}</td>
-                  {isVersus && <td>{record.machineScore ?? 0}</td>}
+                  <td>
+                    {record.playerScore}
+                    {isVersus && record.playerScore > (record.machineScore ?? 0) && <StarIcon />}
+                  </td>
+                  {isVersus && (
+                    <td>
+                      {record.machineScore ?? 0}
+                      {(record.machineScore ?? 0) > record.playerScore && <StarIcon />}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

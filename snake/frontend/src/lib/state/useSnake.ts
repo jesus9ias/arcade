@@ -265,7 +265,7 @@ export function useSnake(): SnakeController {
         case 'Enter':
           setGame((current) => {
             if (current.status === GameStatus.IDLE) return transition(current, 'START');
-            if (current.status === GameStatus.GAME_OVER) {
+            if (current.status === GameStatus.PAUSED || current.status === GameStatus.GAME_OVER) {
               return { ...createInitialState(current.mode), status: GameStatus.PLAYING };
             }
             return current;

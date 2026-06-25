@@ -2,6 +2,7 @@
   "game.title": "Víbora",
   "game.start": "Empezar",
   "game.newGame": "Juego nuevo",
+  "game.restart": "Reiniciar",
   "game.pause": "Pausa",
   "game.resume": "Reanudar",
   "game.boost": "Acelerar",
@@ -32,6 +33,7 @@
   "help.turnCcw": "Flecha izquierda / toca a la izquierda: gira en sentido antihorario",
   "help.pause": "P: pausa / reanudar",
   "help.boost": "A: acelerar sí/no (más rápido, más riesgo)",
+  "help.enter": "Enter: iniciar / reiniciar el juego",
   "help.versus": "Versus: la máquina mueve su propia víbora. Si cualquiera muere, el juego termina y el sobreviviente gana +50%.",
   "help.close": "Cerrar",
 

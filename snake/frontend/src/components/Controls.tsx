@@ -32,6 +32,12 @@ export function Controls({
         </button>
       )}
 
+      {status === GameStatus.PAUSED && (
+        <button type="button" className="button button--primary" onClick={onNewGame}>
+          {t('game.restart')}
+        </button>
+      )}
+
       {status === GameStatus.GAME_OVER && (
         <button type="button" className="button button--primary" onClick={onNewGame}>
           {t('game.newGame')}
