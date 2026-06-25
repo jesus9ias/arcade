@@ -102,15 +102,68 @@ body {
   font-weight: 700;
 }
 
-.status__you {
-  margin: 0.25rem 0 0;
+/* Players bar */
+.players-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.players-bar__vs {
   color: var(--color-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.player-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 2px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font);
+  font-size: 1rem;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.player-chip__symbol {
+  font-weight: 800;
+}
+
+.player-chip__name {
+  font-weight: 600;
+  max-width: 9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+button.player-chip:hover {
+  transform: translateY(-2px);
+}
+
+.player-chip.is-active {
+  border-color: var(--color-accent);
+  background: var(--color-cell-hover);
+}
+
+.player-chip--static {
+  cursor: default;
+  opacity: 0.55;
 }
 
 /* Board */
 .board {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   gap: 0.6rem;
   aspect-ratio: 1 / 1;
 }
@@ -198,13 +251,12 @@ body {
   justify-content: center;
 }
 
-.language-toggle select {
+.language-toggle {
   font-family: var(--font);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius);
-  background: var(--color-surface);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   color: var(--color-text);
-  padding: 0.4rem 0.5rem;
 }
 
 /* Banners */
@@ -362,6 +414,23 @@ body {
   padding: 0.4rem 0.5rem;
   text-align: left;
   white-space: nowrap;
+}
+
+.history__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.history__page-status {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.history__clear {
+  margin-top: 1rem;
 }
 
 .history__confirm {

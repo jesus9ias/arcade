@@ -38,10 +38,10 @@ export function PlayerForm({
   const twoValid = isHVH ? validatePlayerName(playerTwo).ok : true;
   const canSubmit = oneValid && twoValid;
 
+  // Switching mode keeps any names already typed; the second field is only
+  // hidden in HVM, not cleared, so toggling back restores its value.
   const changeMode = (next: GameModeType) => {
     setMode(next);
-    setPlayerOne('');
-    setPlayerTwo('');
   };
 
   const submit = () => {

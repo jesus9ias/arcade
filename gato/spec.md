@@ -140,7 +140,7 @@ interface MatchRecord {
 
 | Key | Shape | Purpose |
 |---|---|---|
-| `gato_prefs` | `{ language: string; theme: string; mode: GameMode; playerOne: string; playerTwo: string; humanSymbol: Symbol }` | User preferences and last known player setup |
+| `gato_prefs` | `{ language: string; theme: string; mode: GameMode; playerOne: string; playerTwo: string; humanSymbol: Symbol; lastHumanPlayerTwo?: string }` | User preferences and last known player setup. `lastHumanPlayerTwo` remembers the most recent **human** Player 2 name (never the machine label) so the modal can prefill it when switching to HVH |
 | `gato_history` | `MatchRecord[]` | Full match history |
 
 ### Meme catalog structure
@@ -177,6 +177,17 @@ The meme category resolved per outcome:
 
 ---
 
+## Main screen
+
+Below the header, the game screen shows, in order:
+
+- **Players bar** — one chip per player (symbol glyph + name). The chip of the player whose turn it is is highlighted (`aria-current`); on game over the winner's chip is highlighted (neither chip on a draw). Clicking a chip opens the Edit players modal. In HVM the machine's chip is shown dimmed and is **not** interactive — only the human's chip opens the modal. The players bar is both the **turn indicator** and the entry point for changing players.
+- **Status bar** — shows only the outcome message on game over (`"{name} wins!"` / `"It's a draw!"`). It carries no turn text and no "you are X" line; turn and symbol are conveyed by the players bar.
+- **Board** — the 3×3 grid.
+- **Actions** — "New game" and "Match history". There is no separate "Change players" button; the players bar replaces it.
+
+---
+
 ## Modals
 
 ### Setup modal — "Who are we playing with?"
@@ -187,7 +198,7 @@ Shown on first load and after every completed game (new game flow).
 - **HVH:** Two name fields ("Player 1 name", "Player 2 name"), symbol selector for Player 1 (Player 2 takes the other automatically).
 - Mode selector (HVM / HVH) is part of this modal.
 - Confirm is disabled until all required fields are non-empty.
-- Changing mode resets the form fields.
+- Changing mode preserves any names already typed: switching to HVH reveals the second name field (keeping whatever was entered before), and switching back to HVM hides it without discarding its value.
 
 ### Edit players modal — "Change players"
 
@@ -204,6 +215,8 @@ Two views toggled by a tab or button group inside the modal:
 **List view:** All matches in reverse chronological order. Each row shows date, players, result, and turn count.
 
 **Leaderboard view:** One row per unique player name, sorted by wins descending. Columns: player name, wins, total games, win rate (%), average turns per win.
+
+Both views are paginated at a maximum of 10 rows per page so the modal does not require vertical scrolling in the common case. Pagination controls (previous / next plus a "page X of Y" indicator) appear only when a view has more than one page. The page resets to the first page when switching tabs. Pagination is presentation-only; it does not change the underlying ordering (list is reverse-chronological, leaderboard is wins-descending).
 
 A "Clear history" button deletes all records from localStorage after a confirmation prompt. Clearing cannot be undone.
 
@@ -227,11 +240,10 @@ A "Clear history" button deletes all records from localStorage after a confirmat
   "setup.modeHVH": "vs Friend",
   "setup.confirm": "Let's play",
 
-  "game.turn": "{{name}}'s turn",
-  "game.youAre": "You are {{symbol}}",
   "game.restart": "New game",
   "game.editPlayers": "Change players",
   "game.history": "Match history",
+  "game.vs": "vs",
 
   "result.win": "{{name}} wins!",
   "result.lose": "{{name}} wins!",
@@ -255,6 +267,9 @@ A "Clear history" button deletes all records from localStorage after a confirmat
   "history.colAvgTurns": "Avg. turns",
   "history.draw": "Draw",
   "history.machine": "Machine",
+  "history.prevPage": "Previous",
+  "history.nextPage": "Next",
+  "history.pageStatus": "Page {{current}} of {{total}}",
 
   "editPlayers.title": "Change players",
   "editPlayers.midGameWarning": "Changing players will reset the current game.",
@@ -370,10 +385,16 @@ Feature: Game setup modal
     When the player selects "O"
     Then the opponent is assigned "X"
 
-  Scenario: Switching mode resets the form
+  Scenario: Switching mode preserves typed names
     Given the player has typed a name in HVM mode
     When the player switches to HVH mode
-    Then all name fields are cleared
+    Then the entered name is still present in the Player 1 field
+
+  Scenario: Player 2 field is prefilled with the last human Player 2 name
+    Given a previous HVH match was set up with Player 2 "Luis"
+    And the player is now in HVM mode in the modal
+    When the player switches to HVH mode
+    Then the Player 2 field is prefilled with "Luis"
 
   Scenario: Confirmed setup transitions to IDLE
     Given all required fields are filled
@@ -454,13 +475,13 @@ Feature: Human vs Human gameplay
   Scenario: Player 1 goes first
     When Player 1 clicks an empty cell
     Then that cell shows "X"
-    And the turn indicator shows "Luis's turn"
+    And the players bar highlights "Luis" as the active player
 
   Scenario: Players alternate turns
     Given it is Player 2's turn
     When Player 2 clicks an empty cell
     Then that cell shows "O"
-    And the turn indicator shows "Ana's turn"
+    And the players bar highlights "Ana" as the active player
 
   Scenario: Player 1 wins in HVH
     Given the board is one move away from a Player 1 win
@@ -561,6 +582,18 @@ Feature: Match history modal
     Given the confirmation prompt is visible
     When the player cancels
     Then the match records remain unchanged
+
+  Scenario: Long history is paginated
+    Given more than 10 matches exist
+    When the player opens the history modal
+    Then at most 10 rows are shown per page
+    And pagination controls indicate the current and total page count
+    And advancing to the next page shows the following rows
+
+  Scenario: Pagination resets when switching views
+    Given the player is on a later page of the list view
+    When the player switches to the leaderboard tab
+    Then the leaderboard view starts on its first page
 ```
 
 ### Feature: Edit players
@@ -612,7 +645,7 @@ Feature: Starting a new game after game over
     And the game returns to SETUP state
 ```
 
-To change names or mode between games, the player uses the "Change players" button, which opens the edit modal explicitly.
+To change names or mode between games, the player clicks a chip in the players bar, which opens the edit modal explicitly.
 
 ### Feature: Theme
 
@@ -846,7 +879,8 @@ Stages are executed in strict order. Claude Code stops after each stage and wait
     - `EditPlayersModal` — name change, mid-game warning
     - `HistoryModal` — list + leaderboard tabs, clear action
     - `MemeOverlay` — image display, close via button or ESC
-    - `StatusBar` — current turn indicator, player names
+    - `PlayersBar` — player chips (symbol + name), turn highlight, opens edit modal
+    - `StatusBar` — outcome message on game over
     - `ThemeToggle`, `LanguageToggle`
 11. Astro page and layout — single page, all components wired
 12. CSS — informal aesthetic, CSS custom properties for both themes, responsive
@@ -886,3 +920,7 @@ Stages are executed in strict order. Claude Code stops after each stage and wait
 | 2026-06-24 | `winnerName` for a draw stores the i18n key `history.draw` (not a resolved string) | The spec said "i18n key for draw" without naming it; `history.draw` is reused by the history view, so the record stays language-agnostic and renders correctly under either language |
 | 2026-06-24 | Leaderboard row shape is `{ name, wins, games, winRate, avgTurns }` | Derived from the history view columns; the field names are fixed here (and by the Stage 2 tests) so the engine and UI share one contract |
 | 2026-06-24 | `MemeCategory` is a string-literal union (`'win' \| 'lose' \| 'neutral'`), not a TS `enum` | The category values double as the `public/memes/<category>/` folder names and as catalog keys; a literal union keeps comparisons and indexing direct without enum-to-string mapping |
+| 2026-06-25 | History modal paginates both views at 10 rows/page; slicing lives in the `HistoryModal` component, not the history logic layer | Pagination is a presentation concern that does not alter ordering or stored data, so it stays in the UI; keeping it out of `history.ts` avoids touching the locked Stage 2 `T-HIST-*` contract. Page size 10 keeps the modal scroll-free in the common case |
+| 2026-06-25 | **Supersedes** "Changing mode resets the form fields": switching mode now preserves names already typed | Re-typing a name after a mode switch is friction; the name is the same person regardless of mode. Player 1's name carries over, and Player 2's value is retained (just hidden) when toggling back to HVM, so no input is lost |
+| 2026-06-25 | `gato_prefs` gains `lastHumanPlayerTwo`, the last human Player 2 name, used to prefill the Player 2 field when switching to HVH | In HVM `playerTwo` is the machine label, so it cannot prefill a human field. A dedicated remembered value (updated only on HVH setups) lets the modal restore the last real opponent name. It is optional and additive; `validatePrefs` stays backward-compatible and the locked `T-LS-*` tests are unaffected |
+| 2026-06-25 | A `PlayersBar` of clickable chips becomes the turn indicator and the entry point to the edit modal; `StatusBar` is reduced to the game-over outcome message; the standalone "Change players" button and the `game.turn` / `game.youAre` strings are removed | Makes both players' identities permanently visible (the goal of the feature) and folds turn indication into the same element, removing the redundancy of showing a name both in a chip and in a turn sentence. The chip shows symbol + name, so the "you are X" line is also redundant. In HVM the machine is not editable, so its chip is dimmed and inert |

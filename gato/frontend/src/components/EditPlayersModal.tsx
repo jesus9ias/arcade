@@ -7,12 +7,14 @@ import type { SetupSubmission } from '../lib/state/useGato';
 
 interface EditPlayersModalProps {
   game: GameState;
+  lastPlayerTwo: string;
   onSubmit: (submission: SetupSubmission) => void;
   onCancel: () => void;
 }
 
 export function EditPlayersModal({
   game,
+  lastPlayerTwo,
   onSubmit,
   onCancel,
 }: EditPlayersModalProps) {
@@ -26,7 +28,7 @@ export function EditPlayersModal({
           mode: game.mode,
           humanSymbol: game.humanSymbol,
           playerOne: game.playerOne,
-          playerTwo: game.mode === GameMode.HVH ? game.playerTwo : '',
+          playerTwo: game.mode === GameMode.HVH ? game.playerTwo : lastPlayerTwo,
         }}
         submitLabel={t('editPlayers.confirm')}
         onSubmit={onSubmit}

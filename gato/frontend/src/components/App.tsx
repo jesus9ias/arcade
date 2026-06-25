@@ -7,6 +7,7 @@ import { EditPlayersModal } from './EditPlayersModal';
 import { HistoryModal } from './HistoryModal';
 import { LanguageToggle } from './LanguageToggle';
 import { MemeOverlay } from './MemeOverlay';
+import { PlayersBar } from './PlayersBar';
 import { SetupModal } from './SetupModal';
 import { StatusBar } from './StatusBar';
 import { ThemeToggle } from './ThemeToggle';
@@ -51,6 +52,10 @@ export default function App() {
         </div>
       )}
 
+      {game.status !== GameStatus.SETUP && (
+        <PlayersBar game={game} onEdit={controller.openEdit} />
+      )}
+
       <StatusBar game={game} />
 
       <Board
@@ -70,20 +75,22 @@ export default function App() {
         <button type="button" className="button" onClick={controller.startNew}>
           {t('game.restart')}
         </button>
-        <button type="button" className="button" onClick={controller.openEdit}>
-          {t('game.editPlayers')}
-        </button>
         <button type="button" className="button" onClick={controller.openHistory}>
           {t('game.history')}
         </button>
       </div>
 
       {game.status === GameStatus.SETUP && (
-        <SetupModal game={game} onSubmit={controller.submitSetup} />
+        <SetupModal
+          game={game}
+          lastPlayerTwo={controller.prefs.lastHumanPlayerTwo ?? ''}
+          onSubmit={controller.submitSetup}
+        />
       )}
       {controller.editOpen && (
         <EditPlayersModal
           game={game}
+          lastPlayerTwo={controller.prefs.lastHumanPlayerTwo ?? ''}
           onSubmit={controller.submitSetup}
           onCancel={controller.closeEdit}
         />

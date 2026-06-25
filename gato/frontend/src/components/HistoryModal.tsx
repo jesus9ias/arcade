@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DRAW } from '../lib/constants';
+import { DRAW, HISTORY_PAGE_SIZE } from '../lib/constants';
 import { buildLeaderboard } from '../lib/history/history';
 import type { MatchRecord } from '../lib/history/history';
 import { Modal } from './Modal';
@@ -16,10 +16,24 @@ type Tab = 'list' | 'leaderboard';
 export function HistoryModal({ records, onClose, onClear }: HistoryModalProps) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('list');
+  const [page, setPage] = useState(1);
   const [confirming, setConfirming] = useState(false);
 
   const recent = [...records].reverse();
   const leaderboard = buildLeaderboard(records);
+
+  const rowCount = tab === 'list' ? recent.length : leaderboard.length;
+  const totalPages = Math.max(1, Math.ceil(rowCount / HISTORY_PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * HISTORY_PAGE_SIZE;
+  const end = start + HISTORY_PAGE_SIZE;
+  const pageRecent = recent.slice(start, end);
+  const pageLeaderboard = leaderboard.slice(start, end);
+
+  const selectTab = (next: Tab) => {
+    setTab(next);
+    setPage(1);
+  };
 
   const resultLabel = (record: MatchRecord): string =>
     record.winner === DRAW ? t('history.draw') : record.winnerName;
@@ -30,14 +44,14 @@ export function HistoryModal({ records, onClose, onClear }: HistoryModalProps) {
         <button
           type="button"
           className={`tab${tab === 'list' ? ' is-active' : ''}`}
-          onClick={() => setTab('list')}
+          onClick={() => selectTab('list')}
         >
           {t('history.tabList')}
         </button>
         <button
           type="button"
           className={`tab${tab === 'leaderboard' ? ' is-active' : ''}`}
-          onClick={() => setTab('leaderboard')}
+          onClick={() => selectTab('leaderboard')}
         >
           {t('history.tabLeaderboard')}
         </button>
@@ -57,7 +71,7 @@ export function HistoryModal({ records, onClose, onClear }: HistoryModalProps) {
             </tr>
           </thead>
           <tbody>
-            {recent.map((record) => (
+            {pageRecent.map((record) => (
               <tr key={record.id}>
                 <td>{new Date(record.date).toLocaleDateString()}</td>
                 <td>{`${record.playerOne} · ${record.playerTwo}`}</td>
@@ -81,7 +95,7 @@ export function HistoryModal({ records, onClose, onClear }: HistoryModalProps) {
             </tr>
           </thead>
           <tbody>
-            {leaderboard.map((row) => (
+            {pageLeaderboard.map((row) => (
               <tr key={row.name}>
                 <td>{row.name}</td>
                 <td>{row.wins}</td>
@@ -92,6 +106,30 @@ export function HistoryModal({ records, onClose, onClear }: HistoryModalProps) {
             ))}
           </tbody>
         </table>
+        </div>
+      )}
+
+      {records.length > 0 && totalPages > 1 && (
+        <div className="history__pagination">
+          <button
+            type="button"
+            className="button"
+            onClick={() => setPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            {t('history.prevPage')}
+          </button>
+          <span className="history__page-status">
+            {t('history.pageStatus', { current: currentPage, total: totalPages })}
+          </span>
+          <button
+            type="button"
+            className="button"
+            onClick={() => setPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            {t('history.nextPage')}
+          </button>
         </div>
       )}
 
@@ -122,7 +160,7 @@ export function HistoryModal({ records, onClose, onClear }: HistoryModalProps) {
         ) : (
           <button
             type="button"
-            className="button button--danger"
+            className="button button--danger history__clear"
             onClick={() => setConfirming(true)}
           >
             {t('history.clear')}

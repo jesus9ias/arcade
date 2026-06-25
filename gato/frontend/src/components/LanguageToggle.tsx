@@ -9,17 +9,16 @@ interface LanguageToggleProps {
 
 export function LanguageToggle({ language, onChange }: LanguageToggleProps) {
   const { t } = useTranslation();
+  const target = language === Language.EN ? Language.ES : Language.EN;
   return (
-    <label className="language-toggle">
-      <span className="visually-hidden">{t('nav.language')}</span>
-      <select
-        value={language}
-        onChange={(event) => onChange(event.target.value as LanguageType)}
-        aria-label={t('nav.language')}
-      >
-        <option value={Language.EN}>EN</option>
-        <option value={Language.ES}>ES</option>
-      </select>
-    </label>
+    <button
+      type="button"
+      className="icon-button language-toggle"
+      onClick={() => onChange(target)}
+      aria-label={t('nav.switchLanguage')}
+      title={t('nav.switchLanguage')}
+    >
+      {target.toUpperCase()}
+    </button>
   );
 }

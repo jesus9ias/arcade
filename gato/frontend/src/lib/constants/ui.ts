@@ -5,3 +5,6 @@ export const MACHINE_MOVE_DELAY_MS = 450;
 
 /** Selectable symbols, in display order. */
 export const SYMBOLS: readonly PlayerSymbol[] = ['X', 'O'];
+
+/** Maximum rows shown per page in each history modal view. */
+export const HISTORY_PAGE_SIZE = 10;

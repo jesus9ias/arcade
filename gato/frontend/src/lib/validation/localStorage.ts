@@ -20,6 +20,8 @@ export interface GatoPrefs {
   playerOne?: string;
   playerTwo?: string;
   humanSymbol?: PlayerSymbol;
+  /** Last human Player 2 name, used to prefill the modal when switching to HVH. */
+  lastHumanPlayerTwo?: string;
 }
 
 /** Returns the parsed value, or undefined if a string is not valid JSON. */
@@ -63,6 +65,9 @@ export function validatePrefs(input: unknown): ValidationResult<GatoPrefs> {
   if (typeof candidate.playerOne === 'string') prefs.playerOne = candidate.playerOne;
   if (typeof candidate.playerTwo === 'string') prefs.playerTwo = candidate.playerTwo;
   if (isSymbol(candidate.humanSymbol)) prefs.humanSymbol = candidate.humanSymbol;
+  if (typeof candidate.lastHumanPlayerTwo === 'string') {
+    prefs.lastHumanPlayerTwo = candidate.lastHumanPlayerTwo;
+  }
 
   return { ok: true, value: prefs };
 }

@@ -269,7 +269,13 @@ export function useGato(): GatoController {
       playerTwo,
     };
     setPrefs((current) => {
-      const merged: GatoPrefs = { ...current, ...nextPrefs };
+      // Remember the last human Player 2 name (never the machine label) so the
+      // modal can prefill it when switching back to HVH.
+      const lastHumanPlayerTwo =
+        submission.mode === GameMode.HVH && submission.playerTwo
+          ? submission.playerTwo
+          : current.lastHumanPlayerTwo;
+      const merged: GatoPrefs = { ...current, ...nextPrefs, lastHumanPlayerTwo };
       persist(STORAGE_KEYS.PREFS, merged);
       return merged;
     });
