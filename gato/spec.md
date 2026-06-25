@@ -72,7 +72,8 @@ Transitions:
   IDLE      → PLAYING    : human places first move
   PLAYING   → PLAYING    : a valid move is made and the game continues
   PLAYING   → GAME_OVER  : win or draw condition is detected after a move
-  GAME_OVER → SETUP      : player starts a new game (name modal reopens)
+  GAME_OVER → IDLE       : player starts a new game while players are registered (board cleared, same players)
+  GAME_OVER → SETUP      : player starts a new game with no registered players (name modal opens)
 ```
 
 ---
@@ -595,13 +596,23 @@ Feature: Edit players modal
 ```gherkin
 Feature: Starting a new game after game over
 
-  Scenario: New game reopens setup modal
+  Scenario: New game starts immediately when players are registered
     Given the game is in GAME_OVER state
+    And the current players are registered
+    When the player clicks "New game"
+    Then the board is cleared
+    And the game returns to IDLE state with the same players
+    And the setup modal is not shown
+
+  Scenario: New game opens setup when players are not registered
+    Given the game is in GAME_OVER state
+    And no players are registered
     When the player clicks "New game"
     Then the setup modal opens
-    And the board is cleared
     And the game returns to SETUP state
 ```
+
+To change names or mode between games, the player uses the "Change players" button, which opens the edit modal explicitly.
 
 ### Feature: Theme
 
@@ -866,7 +877,12 @@ Stages are executed in strict order. Claude Code stops after each stage and wait
 | 2026-06-24 | Meme catalog as a static JSON manifest, not filesystem scan | The frontend cannot scan `public/` at runtime in the browser; a manifest maintained by the developer decouples image management from application logic; Claude Code creates the structure and loader, the developer populates the images and manifest |
 | 2026-06-24 | Meme category `neutral` covers both HVH results and draws in HVM | HVH has no "machine to mock or celebrate against"; draws have no clear winner; a single neutral category simplifies the catalog and avoids over-engineering for a lighthearted feature |
 | 2026-06-24 | New game flow returns to SETUP (not IDLE) | Players may want to change names or mode between games; reopening the setup modal is the natural entry point and avoids a stale state where the board resets but names are unchanged |
+| 2026-06-25 | **Superseded:** "New game" starts a fresh IDLE game with the same players when they are registered; it only opens the setup modal when no players are registered | Reopening the modal on every new game added friction to rematches; players are already known after a game, so a rematch should start immediately. Changing names or mode is still available on demand via the "Change players" button. The pure `startNewGame` transition still returns SETUP (and `T-ST-05` is unchanged); the state layer composes it with `confirmSetup` to decide IDLE vs SETUP |
 | 2026-06-24 | Player name max length: 30 characters | Long enough for any real name; prevents UI overflow on small screens without adding complex truncation logic |
 | 2026-06-24 | Tampered or invalid history records are discarded individually, not wholesale | A single corrupt record should not erase an entire history; partial recovery is more user-friendly and keeps valid data intact |
 | 2026-06-24 | Layer-based frontend architecture | Single-screen game with limited surface area; layer-based structure (`engine/`, `state/`, `validation/`) is sufficient and simpler to navigate at this scope |
 | 2026-06-24 | `gato_prefs` stores player setup (names, mode, symbol) in addition to UI preferences | Allows the setup modal to be skipped on subsequent visits when required names are already present; names are mutable so the edit players modal is always available; storing them in `gato_prefs` keeps all non-history persistence in one key |
+| 2026-06-24 | Validation functions return a discriminated result `{ ok: true; value } \| { ok: false; error }` | The spec only said "returns parsed object / error result"; this shape makes success/failure explicit and type-narrowable, and is fixed by the Stage 2 tests. Chosen during Stage 2 |
+| 2026-06-24 | `winnerName` for a draw stores the i18n key `history.draw` (not a resolved string) | The spec said "i18n key for draw" without naming it; `history.draw` is reused by the history view, so the record stays language-agnostic and renders correctly under either language |
+| 2026-06-24 | Leaderboard row shape is `{ name, wins, games, winRate, avgTurns }` | Derived from the history view columns; the field names are fixed here (and by the Stage 2 tests) so the engine and UI share one contract |
+| 2026-06-24 | `MemeCategory` is a string-literal union (`'win' \| 'lose' \| 'neutral'`), not a TS `enum` | The category values double as the `public/memes/<category>/` folder names and as catalog keys; a literal union keeps comparisons and indexing direct without enum-to-string mapping |
