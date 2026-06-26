@@ -1,5 +1,5 @@
 {
-  "name": "@arcade/snake-infra",
+  "name": "@arcade/<game>-infra",
   "version": "0.0.0",
   "private": true,
   "scripts": {
