@@ -455,8 +455,8 @@ Feature: Level progression
     And the fruits-eaten-this-level counter resets
 
   Scenario: Required fruit count never drops below the minimum
-    Given the level is high enough that the formula falls below 2
-    Then the required fruit count is 2
+    Given the level is high enough that the formula falls below 4
+    Then the required fruit count is 4
 ```
 
 ### Feature: Game over (Simple)

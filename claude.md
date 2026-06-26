@@ -23,6 +23,7 @@ These are enforced on every change. The full statements live in [`spec.md`](spec
 - **Spec-first.** Every implemented feature traces to a Gherkin scenario in the monorepo `spec.md` or the game's `spec.md`. Nothing is built speculatively.
 - **Stage discipline.** Work proceeds in ordered stages. Begin at Stage 1; never advance to the next stage without explicit developer authorization.
 - **TDD gate.** Tests are written before implementation. Code is added only to make a defined test pass. Never create or modify tests without authorization. Orphaned tests are flagged before removal.
+- **Review-first.** When asked to review, audit, inspect, or analyze code or documentation, report findings only. Do not apply any changes until the developer explicitly confirms. "Does this need fixing?" is a review prompt, not an instruction to fix.
 - **Conflict detection.** If a change would contradict existing docs or decisions, stop and alert the developer. If confirmed, update the documentation first, then change the code.
 - **No magic values.** All constants and enums live in dedicated files (`src/lib/constants/` for games, `infra/src/constants/` for the library). No inline literals.
 - **Language.** All code, comments, identifiers, and docs are English. User-visible strings live only in `src/i18n/en.json` / `es.json`; never hardcoded in components or pages.
@@ -58,7 +59,7 @@ arcade/
 │
 ├── gato/               # Game: tic-tac-toe
 │   ├── spec.md  frontend/  infra/
-├── snake/              # Game: snake (spec pending)
+├── snake/              # Game: snake
 │   ├── spec.md  frontend/  infra/
 │
 └── .github/workflows/  # deploy-gato.yml, deploy-snake.yml (path-filtered per game)

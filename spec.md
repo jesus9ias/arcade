@@ -10,6 +10,7 @@
 - **Stage discipline:** Implementation is divided into ordered stages. Begin with Stage 1. Do not proceed to the next stage without explicit developer authorization.
 - **Gherkin coverage:** All code created or modified must satisfy the scenarios defined in the applicable spec. Any new decision or feature discovered during implementation must be documented in the relevant `spec.md` immediately before code is written.
 - **TDD gate:** Tests are written before implementation. No code is added that does not pass its corresponding test. Tests are never created or modified without developer authorization. Orphaned tests trigger an alert before removal.
+- **Review-first:** When asked to review, audit, inspect, or analyze code or documentation, report findings only. Do not apply any changes until the developer explicitly confirms. "Does this need fixing?" is a review prompt, not an instruction to fix.
 - **Conflict detection:** If a proposed code change contradicts existing documentation or decisions, stop, alert the developer, and wait for confirmation. If confirmed, update the documentation first, then apply the change.
 - **No magic values:** All constants and enumerations are declared in dedicated constants or enum files. No inline literal values anywhere.
 - **Language:** All code, comments, variable names, and documentation (`spec.md`, `claude.md`, `readme.md`) are written in English. User-visible text lives only in JSON: UI strings in `src/i18n/en.json` / `es.json`. No hardcoded UI strings in components or pages.

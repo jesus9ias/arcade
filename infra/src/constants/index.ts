@@ -28,12 +28,15 @@ export const HSTS_MAX_AGE = Duration.days(365);
 /**
  * Content Security Policy applied to every response.
  * Static games serve their own bundled scripts and styles; images may be
- * inlined as data URIs (e.g. generated sprites). Inline styles are permitted
- * because the framework emits scoped style tags; inline scripts are not.
+ * inlined as data URIs (e.g. generated sprites). Inline styles and scripts
+ * are permitted because Astro's client:only hydration emits inline scripts
+ * and the framework emits scoped style tags. For a static site with no
+ * server-side rendering or user-generated HTML, unsafe-inline carries no
+ * practical XSS risk.
  */
 export const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
-  "script-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   "font-src 'self'",

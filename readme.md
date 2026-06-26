@@ -12,8 +12,8 @@ The full contract and design decisions live in [`spec.md`](spec.md). Working ins
 
 | Game | Description | Status |
 |---|---|---|
-| [gato](gato/spec.md) | Tic-tac-toe (vs machine or local 2-player) | Spec complete; implementation pending |
-| [snake](snake/spec.md) | Snake — forest theme, Simple + Versus, endless levels, efficiency scoring | Spec complete; implemented |
+| [gato](gato/spec.md) | Tic-tac-toe (vs machine or local 2-player) | Implemented; deployed |
+| [snake](snake/spec.md) | Snake — forest theme, Simple + Versus, endless levels, efficiency scoring | Implemented; deployed |
 
 ## Prerequisites
 

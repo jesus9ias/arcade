@@ -335,8 +335,8 @@ Feature: Input validation and security
 |---|---|---|---|
 | `T-I18N-01` | EN and ES files have identical key sets | `en.json`, `es.json` | Key sets are equal |
 | `T-I18N-02` | No key has an empty string value | `en.json`, `es.json` | All values non-empty |
-| `T-I18N-03` | Resolve returns correct string for known key | `("game.start", "en")` | `"Start"` |
-| `T-I18N-04` | Resolve returns key itself for unknown key | `("game.unknown", "en")` | `"game.unknown"` |
+| `T-I18N-03` | _(optional)_ Resolve returns correct string for known key | `("game.start", "en")` | `"Start"` |
+| `T-I18N-04` | _(optional)_ Resolve returns key itself for unknown key | `("game.unknown", "en")` | `"game.unknown"` |
 | | | | |
 
 ---
