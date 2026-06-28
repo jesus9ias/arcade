@@ -123,6 +123,16 @@ export function GameCanvas({ game, theme, onTurn }: GameCanvasProps) {
     onTurn(x < rect.width / 2 ? 'CCW' : 'CW');
   };
 
+  // iOS Safari does not reliably fire pointerdown on canvas elements; use touchstart as fallback.
+  const handleTouch = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    event.preventDefault();
+    const touch = event.touches[0];
+    if (!touch) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    onTurn(x < rect.width / 2 ? 'CCW' : 'CW');
+  };
+
   return (
     <canvas
       ref={ref}
@@ -130,6 +140,7 @@ export function GameCanvas({ game, theme, onTurn }: GameCanvasProps) {
       height={CANVAS_SIZE}
       className="board-canvas"
       onPointerDown={handlePointer}
+      onTouchStart={handleTouch}
       role="img"
       aria-label={t('game.title')}
     />
