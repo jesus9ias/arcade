@@ -8,7 +8,9 @@
     "gato/frontend",
     "gato/infra",
     "snake/frontend",
-    "snake/infra"
+    "snake/infra",
+    "space-explorer/frontend",
+    "space-explorer/infra"
   ],
   "engines": {
     "node": "24"

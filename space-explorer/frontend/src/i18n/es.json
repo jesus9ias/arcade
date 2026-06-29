@@ -1,0 +1,48 @@
+{
+  "game.title": "Explorador Espacial",
+
+  "levelSelect.title": "Selecciona misión",
+  "levelSelect.locked": "Bloqueado",
+  "levelSelect.bestTime": "Mejor: {{time}}",
+  "levelSelect.noTime": "—",
+  "levelSelect.congratulations": "¡Felicidades! Eres un verdadero explorador espacial. ¡Regresa victorioso a la Tierra!",
+
+  "hud.fuel": "Combustible",
+  "hud.electricity": "Electricidad",
+  "hud.time": "Tiempo",
+  "hud.samples": "Muestras",
+  "hud.gravity": "Gravedad",
+  "hud.laser": "Láser",
+  "hud.turbines": "Turbinas",
+  "hud.missionReady": "Misión completa: ¡escapa ya!",
+
+  "mission.failed": "Misión fallida",
+  "mission.escaped": "¡Misión completa!",
+  "mission.time": "Tiempo: {{time}}",
+  "mission.bestTime": "Mejor: {{time}}",
+  "mission.newBest": "¡Nuevo récord!",
+  "mission.restart": "Reiniciar",
+  "mission.exitLevels": "Salir a misiones",
+
+  "pause.title": "Pausa",
+  "pause.continue": "Continuar",
+  "pause.restart": "Reiniciar",
+  "pause.exitLevels": "Salir a misiones",
+
+  "controls.title": "Controles",
+  "controls.left": "← : propulsor izquierdo (mover a la derecha)",
+  "controls.right": "→ : propulsor derecho (mover a la izquierda)",
+  "controls.up": "↑ : propulsor principal (ascender / frenar caída)",
+  "controls.mode": "M : alternar modo propulsor / turbina",
+  "controls.controls": "C : mostrar controles",
+  "controls.pause": "ESC : pausar",
+  "controls.close": "Cerrar",
+
+  "planet.gravity": "{{value}}× gravedad",
+  "planet.distance": "{{value}} desde la Tierra",
+
+  "nav.language": "Idioma",
+  "nav.theme": "Tema",
+
+  "error.invalidStorage": "Algunos datos guardados no eran válidos y se han restablecido."
+}

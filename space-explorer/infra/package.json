@@ -1,0 +1,25 @@
+{
+  "name": "@arcade/space-explorer-infra",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "bootstrap": "node scripts/cdk.js bootstrap",
+    "synth": "node scripts/cdk.js synth",
+    "diff": "node scripts/cdk.js diff",
+    "deploy": "node scripts/cdk.js deploy",
+    "destroy": "node scripts/cdk.js destroy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@arcade/infra": "*",
+    "aws-cdk-lib": "^2.0.0",
+    "constructs": "^10.0.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "aws-cdk": "^2.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "game.title": "Space Explorer",
+
+  "levelSelect.title": "Select Mission",
+  "levelSelect.locked": "Locked",
+  "levelSelect.bestTime": "Best: {{time}}",
+  "levelSelect.noTime": "—",
+  "levelSelect.congratulations": "Congratulations! You are a true space explorer. Return victorious to Earth!",
+
+  "hud.fuel": "Fuel",
+  "hud.electricity": "Electricity",
+  "hud.time": "Time",
+  "hud.samples": "Samples",
+  "hud.gravity": "Gravity",
+  "hud.laser": "Laser",
+  "hud.turbines": "Turbines",
+  "hud.missionReady": "Mission complete — escape now!",
+
+  "mission.failed": "Mission Failed",
+  "mission.escaped": "Mission Complete!",
+  "mission.time": "Time: {{time}}",
+  "mission.bestTime": "Best: {{time}}",
+  "mission.newBest": "New best!",
+  "mission.restart": "Restart",
+  "mission.exitLevels": "Exit to Missions",
+
+  "pause.title": "Paused",
+  "pause.continue": "Continue",
+  "pause.restart": "Restart",
+  "pause.exitLevels": "Exit to Missions",
+
+  "controls.title": "Controls",
+  "controls.left": "← : left thruster (move right)",
+  "controls.right": "→ : right thruster (move left)",
+  "controls.up": "↑ : main thruster (ascend / brake fall)",
+  "controls.mode": "M : toggle thruster / turbine mode",
+  "controls.controls": "C : show controls",
+  "controls.pause": "ESC : pause",
+  "controls.close": "Close",
+
+  "planet.gravity": "{{value}}× gravity",
+  "planet.distance": "{{value}} from Earth",
+
+  "nav.language": "Language",
+  "nav.theme": "Theme",
+
+  "error.invalidStorage": "Some saved data was invalid and has been reset."
+}
