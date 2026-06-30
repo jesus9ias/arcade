@@ -8,7 +8,7 @@
 
 Space Explorer is a physics-based 2D mission game. The player pilots a rover over alien planets, descending through the atmosphere to collect mineral samples from designated landing zones, then escaping the planet by firing upward. The rover moves exclusively through its propulsors — there is no wheeled ground movement. Gravity, limited fuel, and irregular terrain are the core challenge.
 
-The game ships with 3 planets (levels). The architecture is designed to accommodate any number of additional levels through configuration alone.
+The game ships with 12 planets (levels). The architecture is designed to accommodate any number of additional levels through configuration alone.
 
 **Subdomain:** Configured via `SUBDOMAIN` in `infra/.env`
 **Folder:** `space-explorer/`
@@ -18,7 +18,7 @@ The game ships with 3 planets (levels). The architecture is designed to accommod
 
 ## Deviations from Monorepo Contract
 
-Advanced tools (laser, water turbines) are fully specified in this document and their data model is included, but their implementation is deferred to Phase 2 stages. The core game (Stages 1–4) ships without them. No code for advanced tools is written before Phase 2 is explicitly authorized.
+Water turbines (Stage 5 sub-step 1) and the laser / subsurface samples (Stage 5 sub-step 2) are implemented. Sub-step 1 wires turbine mode, underwater thrust, electricity depletion, `m`-key mode switching, the TURBINE→PROPULSOR surface-break, and the turbine-level stuck-timeout; Glacius carries its underwater sample (`glacius-4`). Sub-step 2 adds the `x` laser: fired while grounded for `LASER_FUEL_COST` fuel, it lowers a `LASER_WIDTH` terrain beam by `LASER_DEPTH` (mutating a mission-owned working heightmap) and exposes any subsurface sample in the beam; Glacius carries its subsurface sample (`glacius-5`). Levels 4–12 (sub-step 4) remain deferred — no new levels are written before that sub-step is explicitly authorized.
 
 ---
 
@@ -136,6 +136,7 @@ On failure: best time is not affected. Player may restart or exit to level selec
 | Right thruster (move left) | `ArrowRight` | |
 | Bottom thruster (ascend / brake) | `ArrowUp` | Main vertical thruster |
 | Toggle propulsor / turbine mode | `m` | Only when turbines available on current level |
+| Fire laser | `x` | Only while grounded on a laser-equipped level; spends `LASER_FUEL_COST` fuel |
 | Show controls | `c` | Opens controls overlay |
 | Pause / options menu | `Escape` | Pauses game; shows Restart / Continue / Exit |
 
@@ -201,7 +202,8 @@ interface RoverState {
 interface SampleState {
   id: string;
   columnIndex: number;      // center column of the sample's flat zone
-  subsurface: boolean;      // Phase 2: requires laser
+  subsurface: boolean;      // requires the laser to be exposed before collection
+  exposed?: boolean;        // surface samples start exposed; subsurface ones only after the laser
   collected: boolean;
 }
 
@@ -212,6 +214,7 @@ interface GameState {
   samples: SampleState[];
   elapsedMs: number;        // ms since mission start; frozen when not PLAYING
   allSamplesCollected: boolean;
+  heightmap?: number[];     // mission-owned working terrain; the laser mutates it. Copied from LevelConfig.heightmap at mission start and reset on restart, leaving the immutable level data untouched
 }
 ```
 
@@ -290,6 +293,13 @@ The world-type → icon catalog (single source of truth: `frontend/src/lib/const
 | `VERDANT` | Lush, vegetated worlds | 🌿 |
 | `VOLCANIC` | Molten, iron-rich, scorched worlds | 🌋 |
 | `FROZEN` | Icy worlds with frozen lakes | ❄️ |
+| `DESERT` | Arid dune worlds, no surface water | 🏜️ |
+| `OCEANIC` | Water worlds dominated by deep lakes | 🌊 |
+| `TOXIC` | Corrosive worlds with acid lakes | ☣️ |
+| `CRYSTALLINE` | Mineral worlds of crystal ridges | 💎 |
+| `BARREN` | Cratered rocky / moon worlds | 🌑 |
+| `STORM` | Wind-blasted high-gravity worlds | 🌩️ |
+| `METALLIC` | Dense metal-rich worlds | ⚙️ |
 | _(none declared)_ | Fallback for a level without a `worldType` | 🪐 |
 
 **Adding a new level (and possibly a new world type):**
@@ -346,15 +356,33 @@ If the rover falls into the lake with no turbines and no fuel: stuck with no mov
 | World type | `FROZEN` ❄️ |
 | Distance | 15.3 light years |
 | Gravity | 1.3× |
-| Fuel | 2000 units |
+| Fuel | 1600 units |
 | Electricity | 400 units |
-| Tools | Water turbines |
-| Samples | 4 (3 on land, 1 underwater) |
+| Tools | Water turbines, Laser |
+| Samples | 5 (3 on land, 1 underwater, 1 subsurface) |
 | Water zones | 2 frozen lakes |
 
-Terrain: jagged ridges with two large lakes. Three land samples on narrow flat zones between ridges. One sample on the floor of the shallower lake (standard landing mechanics apply underwater — the rover must descend gently onto the lake floor at the sample zone using turbines). Scene width = 2× viewport. Sky: pale cyan → ice blue. Ground: white-grey. Water: translucent icy blue.
+Terrain: jagged ridges with two large lakes. Three land samples on narrow flat zones between ridges. One sample on the floor of the shallower lake (standard landing mechanics apply underwater — the rover must descend gently onto the lake floor at the sample zone using turbines). One subsurface sample buried under the open flat tail: the rover lands on the plateau, fires the laser (`x`) to carve a pit, drops into it and lands gently on the exposed floor to collect it. Scene width = 2× viewport. Sky: pale cyan → ice blue. Ground: white-grey. Water: translucent icy blue.
 
 ---
+
+## Level Definitions (Phase 2 — Levels 4–12)
+
+Added in Stage 5 sub-step 4. Each is a single `LevelConfig` object (one file under `lib/levels/`, registered in `lib/levels/index.ts`) using the established terrain DSL (`composeHeightmap`, `segmentStarts`, `segmentCenter`) — no engine changes. Every sample column is the center of a valid flat zone (verified: width ≥ `ROVER_WIDTH`); underwater samples sit on a lake floor below the surface (turbine levels); subsurface samples sit under a flat plateau wide and tall enough for the laser pit (laser levels). Resource budgets are first-pass and tunable after playtest.
+
+| # | Name | World | Gravity | Fuel | Elec | Tools | Samples (land / underwater / subsurface) |
+|---|---|---|---|---|---|---|---|
+| 4 | Aridus | `DESERT` 🏜️ | 1.0× | 1100 | 0 | — | 3 / 0 / 0 |
+| 5 | Caldera | `VOLCANIC` 🌋 | 1.1× | 1000 | 0 | — (lava-lake hazard) | 3 / 0 / 0 |
+| 6 | Maris | `OCEANIC` 🌊 | 0.8× | 1300 | 600 | Turbines | 2 / 2 / 0 |
+| 7 | Cavus | `BARREN` 🌑 | 1.2× | 1500 | 0 | Laser | 3 / 0 / 1 |
+| 8 | Toxina | `TOXIC` ☣️ | 1.0× | 1200 | 500 | Turbines | 3 / 1 / 0 |
+| 9 | Crystalis | `CRYSTALLINE` 💎 | 1.3× | 1600 | 450 | Laser + Turbines | 2 / 1 / 1 |
+| 10 | Procella | `STORM` 🌩️ | 1.5× | 1500 | 0 | — | 4 / 0 / 0 |
+| 11 | Ferrox | `METALLIC` ⚙️ | 1.3× | 1800 | 600 | Laser + Turbines | 2 / 2 / 1 |
+| 12 | Terminus | `FROZEN` ❄️ | 1.6× | 2000 | 700 | Laser + Turbines | 2 / 2 / 2 |
+
+Difficulty rises across the set (gravity 1.0→1.6, scene width ~1020→1780, sample count 3→6, tools accumulating). The mechanic focus rotates: pure-flight precision (Aridus, Caldera, Procella), turbine diving (Maris, Toxina), laser excavation (Cavus), and full-toolkit combinations (Crystalis, Ferrox, Terminus). Terminus is the finale.
 
 ## i18n Keys Required
 
@@ -631,6 +659,49 @@ Feature: Mission samples
     Given sample S is already collected
     When the rover lands at sample S's zone again
     Then the count does not change
+```
+
+### Feature: Laser and subsurface samples
+
+```gherkin
+Feature: Laser terrain mutation and subsurface samples
+
+  Scenario: Firing the laser while grounded carves a pit and spends fuel
+    Given the rover is grounded with at least LASER_FUEL_COST fuel
+    When the player fires the laser
+    Then the LASER_WIDTH columns under the rover are lowered by LASER_DEPTH
+    And fuel decreases by LASER_FUEL_COST
+    And the rover is no longer grounded
+
+  Scenario: The laser cannot fire while airborne
+    Given the rover is airborne
+    When the player fires the laser
+    Then the terrain is unchanged and no fuel is spent
+
+  Scenario: The laser cannot fire without enough fuel
+    Given the rover is grounded with less than LASER_FUEL_COST fuel
+    When the player fires the laser
+    Then the terrain is unchanged and no fuel is spent
+
+  Scenario: Firing the laser exposes a buried subsurface sample in the beam
+    Given a subsurface sample lies within LASER_WIDTH of the rover center
+    When the player fires the laser
+    Then that sample becomes exposed
+
+  Scenario: A subsurface sample cannot be collected before it is exposed
+    Given a subsurface sample that has not been exposed
+    When the rover lands on the terrain at its column
+    Then the sample is not collected
+
+  Scenario: A subsurface sample is collected by landing on the exposed pit floor
+    Given a subsurface sample has been exposed by the laser
+    When the rover lands safely on the carved pit floor at its column
+    Then the sample is collected
+
+  Scenario: Carving resets when the mission restarts
+    Given the player carved terrain with the laser
+    When the mission restarts
+    Then the terrain returns to its original heightmap
 ```
 
 ### Feature: Escape and abort
@@ -930,6 +1001,18 @@ Feature: Input validation and security
 | `T-MSN-09` | Slower time does not replace best | `updateBestTime(95000, 120000)` | `95000` |
 | `T-MSN-10` | Any time replaces null best | `updateBestTime(null, 80000)` | `80000` |
 
+### Laser (pure)
+
+| Test ID | Objective | Input | Expected output |
+|---|---|---|---|
+| `T-LAS-01` | Beam columns lowered by `LASER_DEPTH` | `fireLaser(heightmap, centerCol)` | the `LASER_WIDTH` columns centered on `centerCol` each drop by `LASER_DEPTH` |
+| `T-LAS-02` | Columns outside the beam are unchanged | `fireLaser(heightmap, centerCol)` | columns beyond the beam keep their height |
+| `T-LAS-03` | Lowered height clamps at 0 | `fireLaser` on shallow terrain | no column goes below 0 |
+| `T-LAS-04` | Input heightmap is not mutated | `fireLaser(heightmap, centerCol)` | a new array is returned; the input is unchanged |
+| `T-LAS-05` | Subsurface sample in the beam is exposed | `exposeSubsurfaceSamples(samples, centerCol)` | matching subsurface sample → `exposed: true` |
+| `T-LAS-06` | Sample outside the beam stays unexposed | `exposeSubsurfaceSamples(samples, farCol)` | far subsurface sample unchanged |
+| `T-LAS-07` | Surface (non-subsurface) sample is untouched | `exposeSubsurfaceSamples(samples, centerCol)` | surface sample unchanged |
+
 ### Progress (pure)
 
 | Test ID | Objective | Input | Expected output |
@@ -1013,6 +1096,7 @@ Stages are executed in strict order. Claude Code stops after each stage and wait
 - `frontend/src/lib/state/__tests__/transitions.test.ts` — T-ST-*
 - `frontend/src/lib/validation/__tests__/localStorage.test.ts` — T-LS-*
 - `frontend/src/i18n/__tests__/i18n.test.ts` — T-I18N-*
+- `frontend/src/lib/laser/__tests__/laser.test.ts` — T-LAS-* (added in Stage 5 sub-step 2)
 
 **Constraints:** No implementation files created. Running `vitest` must report all tests as failing.
 
@@ -1060,10 +1144,10 @@ Stages are executed in strict order. Claude Code stops after each stage and wait
 
 **Sub-steps (broken into their own stages when authorized):**
 
-1. Water turbines: `applyTurbine` already correct — enable on level 3, verify underwater physics, mode switching, electricity depletion, and the stuck-timeout behavior in turbine-capable levels.
-2. Subsurface samples: laser fires downward while grounded, removes terrain columns in a beam of width `LASER_WIDTH`, exposes subsurface sample zone; add to level 3.
-3. Add new test definitions for laser terrain mutation and turbine-specific scenarios before writing any code.
-4. Levels 4–12: add 9 more planet configurations using the established `LevelConfig` schema (no engine changes needed).
+1. ✅ **Done (2026-06-30).** Water turbines: `applyTurbine` already correct — enabled on level 3, with verified underwater physics, `m`-key mode switching, the TURBINE→PROPULSOR surface-break, electricity depletion, and the stuck-timeout behavior in turbine-capable levels. Glacius's underwater sample (`glacius-4`) is restored. Wiring is controller-side (`useRover`); no pure-engine test changed.
+2. ✅ **Done (2026-06-30).** Subsurface samples: the `x` laser fires while grounded for `LASER_FUEL_COST` fuel, lowers a `LASER_WIDTH` beam by `LASER_DEPTH` in a mission-owned working heightmap, and exposes any subsurface sample in the beam; the rover drops into the pit and lands on the exposed floor to collect it. Added Glacius's subsurface sample (`glacius-5`). New pure module `lib/laser/` with `T-LAS-*` tests.
+3. ✅ **Done.** New test definitions (`T-LAS-01..07`) for laser terrain mutation and sample exposure were added to this spec and implemented as failing tests before the `lib/laser/` code. Turbine wiring (sub-step 1) needed no new pure tests — its physics (`applyTurbine`) was already covered by `T-PHY-09..12`.
+4. ✅ **Done (2026-06-30).** Levels 4–12: added 9 more planet configurations (Aridus, Caldera, Maris, Cavus, Toxina, Crystalis, Procella, Ferrox, Terminus) using the established `LevelConfig` schema — no engine changes. Seven new world types + icons were added. See "Level Definitions (Phase 2 — Levels 4–12)".
 
 ---
 
@@ -1092,3 +1176,6 @@ Stages are executed in strict order. Claude Code stops after each stage and wait
 | 2026-06-29 | Level cards show a `worldType` icon + `#NNN` id; locked cards show a 🔒 icon | A per-level `worldType` (optional on the type, set by every bundled level) maps to an icon via an exhaustive `Record<WorldType, string>`, so a new world type cannot compile without an icon. The numeric `id` renders as zero-padded `#NNN`. `worldType` is optional only so the Stage-2 test fixtures stay untouched; a level without one falls back to 🪐 |
 | 2026-06-29 | Abort now has its own `MISSION_ABORTED` state and screen (supersedes the earlier "abort is a neutral outcome, no screen") | Exiting the top edge without all samples no longer drops silently to the level select. It transitions to `MISSION_ABORTED`, which shows a modal titled "Mission Aborted" with **Restart** and **Exit to Missions** (same shape as the failure screen, distinct title). Still no progress saved and best time untouched. `transition(PLAYING, 'ESCAPE')` now branches to `MISSION_ABORTED` instead of `LEVEL_SELECT` (T-ST-08 updated; T-ST-12/13 added) |
 | 2026-06-29 | Grounded on land with 0 fuel is a stranded-failure after `STUCK_TIMEOUT_MS` | A rover at rest on land with no fuel can never thrust again — it can neither take off nor escape. Rather than leaving the player trapped, the controller treats it like the submerged-stuck case and fails the mission after the same timeout. Detection is controller-side (time-based), mirroring the existing underwater-stuck check |
+| 2026-06-30 | Stage 5 sub-step 1 (water turbines) implemented; Glacius underwater sample restored | Turbine physics (`applyTurbine`) was already unit-tested; this wires it through `useRover`: `m` toggles mode on turbine levels, the active mode selects propulsor vs. turbine thrust, ungrounding now checks the active-mode resource (electricity in turbine mode), and the stuck-timeout also fires when submerged on a turbine level with 0 electricity. The TURBINE→PROPULSOR surface-break is implemented in the controller by momentarily treating the rover as surfaced for one `applyPropulsor` step (reusing the tested pure function), so no new pure function or unit test was added — keeping the locked test suite untouched. `glacius-4` (lake-A floor, `subsurface: false`) is back in the samples list. Laser/subsurface (sub-step 2) and levels 4–12 (sub-step 4) remain deferred |
+| 2026-06-30 | Stage 5 sub-step 4 (levels 4–12) added | Nine new planets shipped as pure `LevelConfig` data (one file each, registered in `lib/levels/index.ts`), with seven new `WorldType` values + icons (`DESERT`, `OCEANIC`, `TOXIC`, `CRYSTALLINE`, `BARREN`, `STORM`, `METALLIC`) — the exhaustive `WORLD_TYPE_ICON` map forces an icon per type at compile time. No engine, controller, test, or i18n changes (level names are proper nouns held in the config, not translated). Terrain authored with the existing DSL so every sample column stays pinned to a valid flat-zone center; a one-off data check confirmed all 12 levels (samples on valid landing zones, underwater samples under water on turbine levels, subsurface samples laser-capable with pit clearance, spawn always over land). Resource budgets are first-pass, tunable after playtest |
+| 2026-06-30 | Stage 5 sub-step 2 (laser + subsurface samples) implemented | The `x` laser fires only while grounded and spends `LASER_FUEL_COST` fuel; it lowers a `LASER_WIDTH`-column beam under the rover by `LASER_DEPTH` and exposes any subsurface sample in the beam, then ungrounds the rover so it drops into the pit. Terrain mutation lives on a **mission-owned working heightmap** carried in `GameState.heightmap` (optional, so the locked `transitions` fixtures stay valid): copied from the immutable `LevelConfig.heightmap` at mission start and rebuilt on restart, so carving never leaks into the shared level data and resets cleanly. New pure module `lib/laser/` (`fireLaser`, `exposeSubsurfaceSamples`) with `T-LAS-01..07`. Collection gating is controller-side: a subsurface sample is collectible only once `exposed`, mirroring the existing reach-tolerance approach, so `tryCollectSample` stays untouched. `SampleState.exposed?` is optional for the same test-compatibility reason. Laser key is `x` and the shot costs fuel (developer-chosen); Glacius fuel bumped 1200→1600 to keep the 5-sample run completable |

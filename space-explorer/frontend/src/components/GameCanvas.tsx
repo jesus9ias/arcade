@@ -11,8 +11,12 @@ import {
   ROVER_OUTLINE_COLOR,
   FLAME_COLOR,
   FLAME_CORE_COLOR,
+  TURBINE_JET_COLOR,
+  TURBINE_JET_CORE_COLOR,
   SAMPLE_COLOR,
   SAMPLE_COLLECTED_COLOR,
+  SAMPLE_SUBSURFACE_COLOR,
+  PropulsorMode,
 } from '../lib/constants';
 import type { GameState } from '../lib/constants';
 import type { LevelConfig } from '../lib/levels';
@@ -46,14 +50,19 @@ function drawSky(ctx: CanvasRenderingContext2D, level: LevelConfig): void {
   ctx.fillRect(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 }
 
-function drawTerrain(ctx: CanvasRenderingContext2D, level: LevelConfig, cam: number): void {
+function drawTerrain(
+  ctx: CanvasRenderingContext2D,
+  heightmap: number[],
+  level: LevelConfig,
+  cam: number,
+): void {
   ctx.beginPath();
   ctx.moveTo(0, VIEWPORT_HEIGHT);
   const firstCol = Math.floor(cam);
-  const lastCol = Math.min(level.heightmap.length - 1, Math.ceil(cam + VIEWPORT_WIDTH));
+  const lastCol = Math.min(heightmap.length - 1, Math.ceil(cam + VIEWPORT_WIDTH));
   for (let col = firstCol; col <= lastCol; col++) {
     const screenX = col - cam;
-    const screenY = SCENE_HEIGHT - getHeight(level.heightmap, col);
+    const screenY = SCENE_HEIGHT - getHeight(heightmap, col);
     ctx.lineTo(screenX, screenY);
   }
   ctx.lineTo(lastCol - cam, VIEWPORT_HEIGHT);
@@ -75,18 +84,38 @@ function drawWater(ctx: CanvasRenderingContext2D, level: LevelConfig, cam: numbe
   ctx.restore();
 }
 
-function drawSamples(ctx: CanvasRenderingContext2D, state: GameState, level: LevelConfig, cam: number): void {
+function drawSamples(
+  ctx: CanvasRenderingContext2D,
+  state: GameState,
+  heightmap: number[],
+  cam: number,
+): void {
   for (const sample of state.samples) {
     const x = sample.columnIndex - cam;
-    const surfaceY = SCENE_HEIGHT - getHeight(level.heightmap, sample.columnIndex);
+    const surfaceY = SCENE_HEIGHT - getHeight(heightmap, sample.columnIndex);
     const y = surfaceY - SAMPLE_MARKER_RADIUS - 2;
+    const buried = sample.subsurface && !sample.exposed && !sample.collected;
     ctx.beginPath();
     ctx.arc(x, y, SAMPLE_MARKER_RADIUS, 0, Math.PI * 2);
-    ctx.fillStyle = sample.collected ? SAMPLE_COLLECTED_COLOR : SAMPLE_COLOR;
+    ctx.fillStyle = sample.collected
+      ? SAMPLE_COLLECTED_COLOR
+      : buried
+        ? SAMPLE_SUBSURFACE_COLOR
+        : SAMPLE_COLOR;
     ctx.fill();
     ctx.lineWidth = 2;
     ctx.strokeStyle = ROVER_OUTLINE_COLOR;
     ctx.stroke();
+    // Buried hint: a downward chevron telling the player to fire the laser here.
+    if (buried) {
+      ctx.beginPath();
+      ctx.moveTo(x - 4, y + SAMPLE_MARKER_RADIUS + 2);
+      ctx.lineTo(x + 4, y + SAMPLE_MARKER_RADIUS + 2);
+      ctx.lineTo(x, y + SAMPLE_MARKER_RADIUS + 8);
+      ctx.closePath();
+      ctx.fillStyle = SAMPLE_SUBSURFACE_COLOR;
+      ctx.fill();
+    }
   }
 }
 
@@ -97,6 +126,8 @@ function drawFlame(
   dx: number,
   dy: number,
   spread: number,
+  color: string,
+  coreColor: string,
 ): void {
   // Triangle flame from a base point outwards in (dx, dy) direction.
   const tipX = fromX + dx * FLAME_LENGTH;
@@ -106,14 +137,14 @@ function drawFlame(
   ctx.lineTo(fromX + dy * spread, fromY + dx * spread);
   ctx.lineTo(tipX, tipY);
   ctx.closePath();
-  ctx.fillStyle = FLAME_COLOR;
+  ctx.fillStyle = color;
   ctx.fill();
   ctx.beginPath();
   ctx.moveTo(fromX - dy * (spread / 2), fromY - dx * (spread / 2));
   ctx.lineTo(fromX + dy * (spread / 2), fromY + dx * (spread / 2));
   ctx.lineTo(fromX + dx * (FLAME_LENGTH * 0.6), fromY + dy * (FLAME_LENGTH * 0.6));
   ctx.closePath();
-  ctx.fillStyle = FLAME_CORE_COLOR;
+  ctx.fillStyle = coreColor;
   ctx.fill();
 }
 
@@ -126,19 +157,24 @@ function drawRover(
   const { rover } = state;
   const x = rover.position.x - cam;
   const y = rover.position.y;
-  const hasFuel = rover.fuel > 0;
+  const turbineMode = rover.mode === PropulsorMode.TURBINE;
 
-  // Flames (only when thrusting in atmosphere with fuel).
-  if (hasFuel && !rover.underwater) {
+  // Effects render only where the active thruster actually produces force:
+  // propulsor flames in atmosphere with fuel, turbine jets underwater with power.
+  const showPropulsor = !turbineMode && rover.fuel > 0 && !rover.underwater;
+  const showTurbine = turbineMode && rover.electricity > 0 && rover.underwater;
+  if (showPropulsor || showTurbine) {
     const flicker = 0.7 + Math.random() * 0.3;
+    const color = showTurbine ? TURBINE_JET_COLOR : FLAME_COLOR;
+    const coreColor = showTurbine ? TURBINE_JET_CORE_COLOR : FLAME_CORE_COLOR;
     if (thrusters.bottom) {
-      drawFlame(ctx, x + ROVER_WIDTH / 2, y + ROVER_HEIGHT, 0, flicker, ROVER_WIDTH / 3);
+      drawFlame(ctx, x + ROVER_WIDTH / 2, y + ROVER_HEIGHT, 0, flicker, ROVER_WIDTH / 3, color, coreColor);
     }
     if (thrusters.left) {
-      drawFlame(ctx, x, y + ROVER_HEIGHT / 2, -flicker, 0, ROVER_HEIGHT / 3);
+      drawFlame(ctx, x, y + ROVER_HEIGHT / 2, -flicker, 0, ROVER_HEIGHT / 3, color, coreColor);
     }
     if (thrusters.right) {
-      drawFlame(ctx, x + ROVER_WIDTH, y + ROVER_HEIGHT / 2, flicker, 0, ROVER_HEIGHT / 3);
+      drawFlame(ctx, x + ROVER_WIDTH, y + ROVER_HEIGHT / 2, flicker, 0, ROVER_HEIGHT / 3, color, coreColor);
     }
   }
 
@@ -181,11 +217,12 @@ export default function GameCanvas({ state, level }: Props) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const cam = cameraOffset(state, level);
+    const heightmap = state.heightmap ?? level.heightmap;
     ctx.clearRect(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
     drawSky(ctx, level);
-    drawTerrain(ctx, level, cam);
+    drawTerrain(ctx, heightmap, level, cam);
     drawWater(ctx, level, cam);
-    drawSamples(ctx, state, level, cam);
+    drawSamples(ctx, state, heightmap, cam);
     drawRover(ctx, state, cam, thrustersRef.current);
   }, [state, level]);
 

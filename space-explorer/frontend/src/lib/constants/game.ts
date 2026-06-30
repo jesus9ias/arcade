@@ -44,7 +44,8 @@ export interface RoverState {
 export interface SampleState {
   id: string;
   columnIndex: number; // center column of the sample's flat zone
-  subsurface: boolean; // Phase 2: requires laser
+  subsurface: boolean; // requires the laser to be exposed before collection
+  exposed?: boolean; // surface samples start exposed; subsurface ones only after the laser fires
   collected: boolean;
 }
 
@@ -55,4 +56,5 @@ export interface GameState {
   samples: SampleState[];
   elapsedMs: number; // ms since mission start; frozen when not PLAYING
   allSamplesCollected: boolean;
+  heightmap?: number[]; // mission-owned working terrain; the laser mutates it. Copied from LevelConfig.heightmap at mission start, reset on restart
 }

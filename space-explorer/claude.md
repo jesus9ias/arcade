@@ -12,13 +12,15 @@ Game-specific working instructions for Claude Code. This game inherits the monor
 - Land safely only when contact is within a valid flat zone (width ≥ `ROVER_WIDTH`, rover centered), `vy ≤ MAX_LANDING_SPEED`, and `|vx| ≤ MAX_LANDING_LATERAL_SPEED`. Any other terrain contact destroys the rover.
 - Three thrusters (left → pushes right, right → pushes left, bottom → up) may fire together; each costs `FUEL_CONSUMPTION_RATE` fuel/s. Propulsors only thrust in the atmosphere.
 - Escape with **all** samples → level complete (best time saved if better). Exit the top with samples missing → **abort** (its own `MISSION_ABORTED` screen, no save). Unsafe contact, or being stranded with no fuel past `STUCK_TIMEOUT_MS` (on land, or submerged on a turbine-less level) → **mission failed**.
-- 3 config-driven planets (Verdania, Ferrum, Glacius), unlocked sequentially. Bilingual (English / Spanish), light/dark theme.
+- 12 config-driven planets (Verdania, Ferrum, Glacius, Aridus, Caldera, Maris, Cavus, Toxina, Crystalis, Procella, Ferrox, Terminus), unlocked sequentially. Bilingual (English / Spanish), light/dark theme.
 - Static frontend only — **no backend**.
 
 ### Phase boundaries (important)
 
 - **Phase 1 (Stages 1–4, shipped):** propulsor flight, terrain/landing, samples, escape/abort, progression, full UI. **Propulsor-only.**
-- **Phase 2 (Stage 5, NOT started — needs separate authorization):** water turbines (full mechanics + `m`-key mode switching), the laser and subsurface samples, and levels 4–12. `applyTurbine` is already implemented and unit-tested, and Glacius carries its turbine flags + underwater sample as data, but the controller does not wire turbines yet. **Do not write turbine/laser controller code or new levels before Phase 2 is authorized.**
+- **Phase 2 sub-step 1 (Stage 5, shipped 2026-06-30):** water turbines fully wired — `m`-key mode switching, mode-selected thrust (turbine underwater / propulsor in atmosphere), active-mode resource gating on ungrounding, the TURBINE→PROPULSOR surface-break, turbine-jet rendering, the turbine-level stuck-timeout, and Glacius's restored underwater sample (`glacius-4`).
+- **Phase 2 sub-step 2 (Stage 5, shipped 2026-06-30):** the `x` laser and subsurface samples — fired while grounded for `LASER_FUEL_COST` fuel, it lowers a `LASER_WIDTH` beam by `LASER_DEPTH` in a mission-owned working heightmap (`GameState.heightmap`, copied from the level, reset on restart) and exposes any subsurface sample in the beam (`SampleState.exposed`); collection is gated controller-side on exposure. New pure module `lib/laser/` (`fireLaser`, `exposeSubsurfaceSamples`, `T-LAS-*`). Glacius carries its subsurface sample (`glacius-5`). The pure engine's locked tests were untouched — both new state fields are optional to keep the `transitions`/`mission` fixtures valid.
+- **Phase 2 sub-step 4 (Stage 5, shipped 2026-06-30):** levels 4–12 — nine new planets as pure `LevelConfig` data (Aridus, Caldera, Maris, Cavus, Toxina, Crystalis, Procella, Ferrox, Terminus), plus seven new `WorldType` values + icons. No engine/controller/test/i18n changes. **Stage 5 (Phase 2) is now complete.**
 
 ---
 
@@ -60,12 +62,13 @@ space-explorer/
 │       ├── pages/           # index.astro (renders <App client:only="react" />)
 │       ├── styles/          # global.css (space palette, both themes)
 │       └── lib/
-│           ├── constants/   # game, scene, rover, physics, mission, storage,
+│           ├── constants/   # game, scene, rover, physics, mission, laser, storage,
 │           │                #   preferences, validation, world, ui — all literals here
 │           ├── physics/     # physics.ts: applyGravity, applyPropulsor,
 │           │                #   applyTurbine, integratePosition (pure)
 │           ├── terrain/     # terrain.ts: getHeight, isFlatZone, isValidLandingZone,
 │           │                #   detectTerrainCollision, isUnderwater (pure)
+│           ├── laser/       # laser.ts: fireLaser, exposeSubsurfaceSamples (pure)
 │           ├── mission/     # mission.ts: tryCollectSample, allSamplesCollected,
 │           │                #   isLandingSafe, hasEscaped, updateBestTime (pure)
 │           ├── levels/      # types, builder (terrain DSL), 3 planet configs, index
@@ -77,7 +80,7 @@ space-explorer/
 └── infra/                   # CDK app (GameStack) — see infra/readme.md
 ```
 
-Architecture is **layer-based extended with domain folders** (the spec's declared choice): `physics/`, `terrain/`, `mission/`, `levels/`, `progress/` alongside the default `state/` / `validation/`.
+Architecture is **layer-based extended with domain folders** (the spec's declared choice): `physics/`, `terrain/`, `laser/`, `mission/`, `levels/`, `progress/` alongside the default `state/` / `validation/`.
 
 ---
 
@@ -85,7 +88,7 @@ Architecture is **layer-based extended with domain folders** (the spec's declare
 
 1. **Update `spec.md` first.** Add or change the relevant Gherkin scenario and, if logic is affected, the unit-test definition. Log the decision in the Decisions Log. Get developer authorization (stage discipline still applies).
 2. **Adjust/extend tests** (only with authorization) to cover the new behavior.
-3. **Implement in the logic layer** (`physics/`, `terrain/`, `mission/`, `progress/`, `state/transitions`, `validation/`) as pure functions; keep every literal in `lib/constants/`.
+3. **Implement in the logic layer** (`physics/`, `terrain/`, `laser/`, `mission/`, `progress/`, `state/transitions`, `validation/`) as pure functions; keep every literal in `lib/constants/`.
 4. **Wire it through `useRover`** (`lib/state/useRover.ts`), then surface it in components.
 5. **Add any new UI strings** to both `i18n/en.json` and `i18n/es.json`.
 6. **Validate:** `npm run test --workspace space-explorer/frontend`, then `npm run typecheck --workspace space-explorer/frontend`, then `npm run build --workspace space-explorer/frontend`.
@@ -96,10 +99,11 @@ If a change contradicts an existing scenario or decision, stop, update the docum
 
 ### Key invariants to preserve
 
-- The engine stays pure and `dt`-driven (no `Date`/`performance.now` inside `physics`/`terrain`/`mission`/`progress`). Wall-clock time lives only in `useRover`.
+- The engine stays pure and `dt`-driven (no `Date`/`performance.now` inside `physics`/`terrain`/`laser`/`mission`/`progress`). Wall-clock time lives only in `useRover`.
 - Propulsors thrust only in atmosphere; turbines only underwater. Using the wrong one wastes the resource and produces no force.
+- The laser mutates only the mission-owned `GameState.heightmap` (a copy), never `LevelConfig.heightmap`; carving resets on restart. A subsurface sample is collectable only once `exposed`.
 - Best time updates **only** on successful escape and **only** when strictly better; failure and abort never touch it.
-- Every sample's `columnIndex` is the center of a valid flat zone (width ≥ `ROVER_WIDTH`).
+- Every sample's `columnIndex` is the center of a valid flat zone (width ≥ `ROVER_WIDTH`); for a subsurface sample that zone is the carved pit floor.
 - The in-progress `GameState` is never persisted; only `space_prefs` and `space_progress` are.
 
 ---

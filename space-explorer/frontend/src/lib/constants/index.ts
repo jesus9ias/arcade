@@ -3,6 +3,7 @@ export * from './scene';
 export * from './rover';
 export * from './physics';
 export * from './mission';
+export * from './laser';
 export * from './storage';
 export * from './preferences';
 export * from './validation';

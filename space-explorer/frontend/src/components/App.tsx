@@ -96,7 +96,10 @@ export default function App() {
           <div className="stage">
             <GameCanvas state={game.state} level={level} />
             <HUD state={game.state} level={level} />
-            <TouchControls />
+            <TouchControls
+              showModeToggle={level.tools.waterTurbines}
+              showLaser={level.tools.laser}
+            />
 
             {status === GameStatus.PAUSED && (
               <PauseMenu

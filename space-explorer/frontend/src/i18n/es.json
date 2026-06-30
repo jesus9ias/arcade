@@ -14,6 +14,9 @@
   "hud.gravity": "Gravedad",
   "hud.laser": "Láser",
   "hud.turbines": "Turbinas",
+  "hud.mode": "Modo",
+  "hud.modePropulsor": "Propulsor",
+  "hud.modeTurbine": "Turbina",
   "hud.missionReady": "Misión completa: ¡escapa ya!",
 
   "mission.failed": "Misión fallida",
@@ -36,6 +39,7 @@
   "controls.right": "→ : propulsor derecho (mover a la izquierda)",
   "controls.up": "↑ : propulsor principal (ascender / frenar caída)",
   "controls.mode": "M : alternar modo propulsor / turbina",
+  "controls.laser": "X : disparar láser (excavar un pozo aterrizado)",
   "controls.controls": "C : mostrar controles",
   "controls.pause": "ESC : pausar",
   "controls.close": "Cerrar",

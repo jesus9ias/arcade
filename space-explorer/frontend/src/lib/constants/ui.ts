@@ -12,6 +12,13 @@ export const WORLD_TYPE_ICON: Record<WorldType, string> = {
   [WorldType.VERDANT]: '🌿',
   [WorldType.VOLCANIC]: '🌋',
   [WorldType.FROZEN]: '❄️',
+  [WorldType.DESERT]: '🏜️',
+  [WorldType.OCEANIC]: '🌊',
+  [WorldType.TOXIC]: '☣️',
+  [WorldType.CRYSTALLINE]: '💎',
+  [WorldType.BARREN]: '🌑',
+  [WorldType.STORM]: '🌩️',
+  [WorldType.METALLIC]: '⚙️',
 };
 
 /** Fallback icon for a level that declares no world type. */
@@ -34,5 +41,10 @@ export const ROVER_BODY_COLOR = '#d7dee8';
 export const ROVER_OUTLINE_COLOR = '#2b3140';
 export const FLAME_COLOR = '#ffb347';
 export const FLAME_CORE_COLOR = '#fff1b8';
+/** Turbine jet colours, used underwater in turbine mode (cooler than the flame). */
+export const TURBINE_JET_COLOR = '#7fdfff';
+export const TURBINE_JET_CORE_COLOR = '#e6fbff';
 export const SAMPLE_COLOR = '#ffd54a';
 export const SAMPLE_COLLECTED_COLOR = '#5a6072';
+/** Marker colour for a buried subsurface sample (not yet exposed by the laser). */
+export const SAMPLE_SUBSURFACE_COLOR = '#c084fc';

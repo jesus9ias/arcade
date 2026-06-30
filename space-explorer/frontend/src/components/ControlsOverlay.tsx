@@ -11,6 +11,7 @@ export default function ControlsOverlay({ onClose }: Props) {
     'controls.right',
     'controls.up',
     'controls.mode',
+    'controls.laser',
     'controls.controls',
     'controls.pause',
   ] as const;

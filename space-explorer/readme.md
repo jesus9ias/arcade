@@ -1,6 +1,6 @@
 # space-explorer
 
-A physics-based planetary mission game. Pilot a rover down through a planet's atmosphere against gravity and a limited fuel supply, touch down gently on flat landing zones to collect mineral samples, then fire upward off the top of the scene to escape. Three planets (Verdania, Ferrum, Glacius), unlocked in order, each with its own gravity, fuel budget and terrain. English/Spanish, light/dark themes, best-time tracking per level.
+A physics-based planetary mission game. Pilot a rover down through a planet's atmosphere against gravity and a limited fuel supply, touch down gently on flat landing zones to collect mineral samples, then fire upward off the top of the scene to escape. Twelve planets, unlocked in order, each with its own gravity, fuel budget, terrain and tool mix (water turbines, laser). English/Spanish, light/dark themes, best-time tracking per level.
 
 Part of the [`arcade`](../readme.md) monorepo. Game contract: [`spec.md`](spec.md). Working instructions: [`claude.md`](claude.md).
 
@@ -29,7 +29,9 @@ npm run build --workspace space-explorer/frontend      # production build → sp
 
 ## How to play
 
-- **Thrusters:** `←` left thruster (pushes the rover **right**), `→` right thruster (pushes **left**), `↑` main thruster (ascend / brake your fall). Hold several at once. Thrusters only work in the atmosphere and burn fuel whenever active.
+- **Thrusters:** `←` left thruster (pushes the rover **right**), `→` right thruster (pushes **left**), `↑` main thruster (ascend / brake your fall). Hold several at once. Propulsors only work in the atmosphere and burn fuel whenever active.
+- **Mode (turbine levels):** `m` toggles propulsor ⇆ turbine mode. Turbines move the rover **underwater** (and burn electricity); propulsors give no thrust underwater, turbines none in the air. Switching to propulsor while submerged with `↑` held punches the rover up through the surface.
+- **Laser (laser levels):** `x` fires the laser straight down while grounded, spending a block of fuel to carve a pit and expose a buried **subsurface** sample (shown with a violet marker and a ▼ hint). The rover drops into the pit — brake and land gently on the floor to collect it. No laser, no subsurface sample.
 - **Land:** descend onto a flat zone at low speed — gentle enough vertically *and* laterally, with the rover centered on the zone. Landing on a sample's zone collects it automatically. Any other contact (too fast, sloped ground, a zone narrower than the rover) destroys the rover.
 - **Escape:** once **all** samples are collected, fly off the top edge to complete the level. Leaving the top with samples still missing **aborts** the mission back to the level select (no progress saved).
 - **Pause:** `Escape` (Restart / Continue / Exit). **Controls help:** `c`. On touch devices, on-screen arrow buttons mirror the keyboard.
@@ -37,7 +39,7 @@ npm run build --workspace space-explorer/frontend      # production build → sp
 
 A refresh restarts from the level select; in-progress missions are not saved. Preferences and level progress persist in `localStorage` (`space_prefs`, `space_progress`).
 
-> Phase 1 ships propulsor flight only. Water turbines (and Glacius's underwater sample), the laser/subsurface samples, and additional planets are Phase 2.
+> Phase 2 is complete (Stage 5). Water turbines and the laser are wired: press `m` to dive into a lake on turbine power for underwater samples, and `x` (while grounded) to laser a pit and reach a buried subsurface sample. The HUD shows the active mode and its resource (fuel vs. electricity). Levels 4–12 add nine more planets with rising gravity and rotating tool puzzles, ending on Terminus.
 
 ## Configuration
 

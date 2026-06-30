@@ -38,8 +38,10 @@ export default function HUD({ state, level }: Props) {
       </div>
       {level.tools.waterTurbines && (
         <div className="hud__stat hud__stat--tool">
-          <span className="hud__label">{t('hud.turbines')}</span>
-          <span className="hud__value">✓</span>
+          <span className="hud__label">{t('hud.mode')}</span>
+          <span className="hud__value">
+            {t(isTurbine ? 'hud.modeTurbine' : 'hud.modePropulsor')}
+          </span>
         </div>
       )}
       {level.tools.laser && (

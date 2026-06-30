@@ -394,6 +394,13 @@ body {
   color: #fff;
 }
 
+/* Single-shot action buttons (mode / laser) sit apart from the thrusters. */
+.touch-button--action {
+  flex: 0 0 auto;
+  max-width: 64px;
+  font-size: 1.3rem;
+}
+
 /* Touch controls are most useful on coarse pointers / narrow screens. */
 @media (hover: hover) and (pointer: fine) {
   .touch-controls {

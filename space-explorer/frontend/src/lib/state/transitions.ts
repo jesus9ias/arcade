@@ -13,12 +13,14 @@ export type TransitionAction =
   | 'DESTROY'
   | 'ESCAPE';
 
-/** Initial samples for a level (none collected). */
+/** Initial samples for a level (none collected). Subsurface samples start hidden
+ *  until the laser exposes them; surface samples are exposed from the start. */
 function initialSamples(level: LevelConfig): SampleState[] {
   return level.samples.map((sample) => ({
     id: sample.id,
     columnIndex: sample.columnIndex,
     subsurface: sample.subsurface,
+    exposed: !sample.subsurface,
     collected: false,
   }));
 }
@@ -48,6 +50,8 @@ export function createMissionState(level: LevelConfig): GameState {
     samples: initialSamples(level),
     elapsedMs: 0,
     allSamplesCollected: false,
+    // Working copy of the terrain; the laser mutates this, never the level data.
+    heightmap: [...level.heightmap],
   };
 }
 
@@ -69,6 +73,7 @@ export function createLevelSelectState(): GameState {
     samples: [],
     elapsedMs: 0,
     allSamplesCollected: false,
+    heightmap: [],
   };
 }
 

@@ -6,17 +6,25 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   GameStatus,
+  PropulsorMode,
   ThrusterDirection,
   STORAGE_KEYS,
   STUCK_TIMEOUT_MS,
+  LASER_FUEL_COST,
   ROVER_WIDTH,
   ROVER_HEIGHT,
   SCENE_HEIGHT,
 } from '../constants';
-import type { GameState } from '../constants';
+import type { GameState, RoverState, ThrusterDirection as ThrusterDir } from '../constants';
 import type { LevelConfig } from '../levels';
 import { LEVELS } from '../levels';
-import { applyGravity, applyPropulsor, integratePosition } from '../physics/physics';
+import {
+  applyGravity,
+  applyPropulsor,
+  applyTurbine,
+  integratePosition,
+} from '../physics/physics';
+import { fireLaser, exposeSubsurfaceSamples } from '../laser/laser';
 import {
   detectTerrainCollision,
   getHeight,
@@ -92,14 +100,18 @@ function saveProgress(progress: LevelProgress[]): void {
   localStorage.setItem(STORAGE_KEYS.PROGRESS, JSON.stringify(progress));
 }
 
-/** Column nearest the rover center that holds an uncollected sample, if within reach. */
+/** Column nearest the rover center that holds a collectable uncollected sample,
+ *  if within reach. Subsurface samples count only once the laser has exposed them. */
 function landingSampleColumn(
   state: GameState,
   centerColumn: number,
 ): number {
   const reach = ROVER_WIDTH / 2;
   const hit = state.samples.find(
-    (sample) => !sample.collected && Math.abs(sample.columnIndex - centerColumn) <= reach,
+    (sample) =>
+      !sample.collected &&
+      (!sample.subsurface || sample.exposed) &&
+      Math.abs(sample.columnIndex - centerColumn) <= reach,
   );
   return hit ? hit.columnIndex : centerColumn;
 }
@@ -121,6 +133,10 @@ export function useGame(): UseGame {
   const lastTimeRef = useRef<number>(0);
   const stuckSinceRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
+  // Surface-break grace: switching TURBINE→PROPULSOR while submerged with the up
+  // key held lets the bottom propulsor thrust through the water surface. Stays
+  // active until the rover surfaces, releases up, or switches back to turbines.
+  const surfaceBreakRef = useRef<boolean>(false);
 
   const sync = useCallback((next: GameState) => {
     stateRef.current = next;
@@ -162,6 +178,9 @@ export function useGame(): UseGame {
     (dt: number) => {
       const level = levelRef.current;
       if (!level) return;
+      // The working heightmap (carved by the laser) drives collision and landing;
+      // it falls back to the level's terrain before the first mutation.
+      const heightmap = stateRef.current.heightmap ?? level.heightmap;
       let rover = stateRef.current.rover;
       const keys = keysRef.current;
       const bottom = keys.has('ArrowUp');
@@ -169,20 +188,47 @@ export function useGame(): UseGame {
       const right = keys.has('ArrowRight');
       const anyThrust = bottom || left || right;
 
-      // Leave the ground when thrusting with fuel available.
-      if (rover.grounded && anyThrust && rover.fuel > 0) {
+      // Active mode picks which thruster (and resource) actually produces force:
+      // turbines underwater (electricity), propulsors in atmosphere (fuel).
+      const turbineMode = rover.mode === PropulsorMode.TURBINE;
+      const fire = (r: RoverState, dir: ThrusterDir): RoverState =>
+        turbineMode ? applyTurbine(r, dir, dt) : applyPropulsor(r, dir, dt);
+
+      // The surface-break grace ends once the rover is no longer holding up in
+      // propulsor mode underwater.
+      if (surfaceBreakRef.current && (turbineMode || !bottom || !rover.underwater)) {
+        surfaceBreakRef.current = false;
+      }
+
+      // Leave the ground when thrusting with the active-mode resource available.
+      const canThrust = turbineMode ? rover.electricity > 0 : rover.fuel > 0;
+      if (rover.grounded && anyThrust && canThrust) {
         rover = { ...rover, grounded: false };
       }
 
       rover = applyGravity(rover, dt, level.gravity);
-      if (bottom) rover = applyPropulsor(rover, ThrusterDirection.BOTTOM, dt);
-      if (left) rover = applyPropulsor(rover, ThrusterDirection.LEFT, dt);
-      if (right) rover = applyPropulsor(rover, ThrusterDirection.RIGHT, dt);
+      if (bottom) {
+        if (!turbineMode && surfaceBreakRef.current && rover.underwater) {
+          // Documented exception: a propulsor pulse fired through the surface.
+          // Treat the rover as surfaced for this one step (reusing the tested
+          // pure function); underwater is recomputed from position below.
+          const surfaced = applyPropulsor(
+            { ...rover, underwater: false },
+            ThrusterDirection.BOTTOM,
+            dt,
+          );
+          rover = { ...surfaced, underwater: rover.underwater };
+        } else {
+          rover = fire(rover, ThrusterDirection.BOTTOM);
+        }
+      }
+      if (left) rover = fire(rover, ThrusterDirection.LEFT);
+      if (right) rover = fire(rover, ThrusterDirection.RIGHT);
 
       if (!rover.grounded) rover = integratePosition(rover, dt);
 
       // Keep the rover within the horizontal scene bounds.
-      const maxX = Math.max(0, level.heightmap.length - ROVER_WIDTH);
+      const maxX = Math.max(0, heightmap.length - ROVER_WIDTH);
       rover = {
         ...rover,
         position: { ...rover.position, x: clamp(rover.position.x, 0, maxX) },
@@ -202,12 +248,12 @@ export function useGame(): UseGame {
       }
 
       // Terrain contact — safe landing or destruction.
-      if (!rover.grounded && detectTerrainCollision(rover, level.heightmap)) {
+      if (!rover.grounded && detectTerrainCollision(rover, heightmap)) {
         const centerColumn = Math.floor(rover.position.x + ROVER_WIDTH / 2);
         const safe = isLandingSafe(rover.velocity.y, rover.velocity.x);
-        const validZone = isValidLandingZone(level.heightmap, centerColumn, ROVER_WIDTH);
+        const validZone = isValidLandingZone(heightmap, centerColumn, ROVER_WIDTH);
         if (safe && validZone) {
-          const surface = getHeight(level.heightmap, centerColumn);
+          const surface = getHeight(heightmap, centerColumn);
           rover = {
             ...rover,
             position: { ...rover.position, y: SCENE_HEIGHT - surface - ROVER_HEIGHT },
@@ -230,12 +276,16 @@ export function useGame(): UseGame {
       }
 
       // Stranded with no way to move: grounded on land with no fuel (propulsors
-      // cannot fire, so no take-off and no escape), or submerged on a turbine-less
-      // level with no fuel. Fail after the timeout so the player is never trapped.
+      // cannot fire, so no take-off and no escape); submerged on a turbine-less
+      // level with no fuel; or submerged on a turbine level with no electricity
+      // (turbines cannot fire and propulsors give no thrust underwater). Fail
+      // after the timeout so the player is never trapped.
       const strandedOnLand = rover.grounded && !rover.underwater && rover.fuel <= 0;
       const strandedUnderwater =
         rover.underwater && !level.tools.waterTurbines && rover.fuel <= 0;
-      const stuck = strandedOnLand || strandedUnderwater;
+      const strandedUnderwaterTurbines =
+        rover.underwater && level.tools.waterTurbines && rover.electricity <= 0;
+      const stuck = strandedOnLand || strandedUnderwater || strandedUnderwaterTurbines;
       const now = performance.now();
       if (stuck) {
         if (stuckSinceRef.current === null) stuckSinceRef.current = now;
@@ -291,6 +341,49 @@ export function useGame(): UseGame {
         const status = stateRef.current.status;
         if (status === GameStatus.PLAYING) sync(transition(stateRef.current, 'PAUSE'));
         else if (status === GameStatus.PAUSED) sync(transition(stateRef.current, 'CONTINUE'));
+        return;
+      }
+      // Toggle propulsor / turbine mode — only on turbine-capable levels.
+      if (e.key === 'm' || e.key === 'M') {
+        const level = levelRef.current;
+        if (!level?.tools.waterTurbines || stateRef.current.status !== GameStatus.PLAYING) {
+          return;
+        }
+        const rover = stateRef.current.rover;
+        const nextMode =
+          rover.mode === PropulsorMode.TURBINE
+            ? PropulsorMode.PROPULSOR
+            : PropulsorMode.TURBINE;
+        if (
+          nextMode === PropulsorMode.PROPULSOR &&
+          rover.underwater &&
+          keysRef.current.has('ArrowUp')
+        ) {
+          surfaceBreakRef.current = true;
+        }
+        const next: GameState = { ...stateRef.current, rover: { ...rover, mode: nextMode } };
+        stateRef.current = next;
+        sync(next);
+        return;
+      }
+      // Fire the laser — only while grounded on a laser level with enough fuel.
+      // It carves a pit, exposes any subsurface sample under it, spends fuel, and
+      // ungrounds the rover so it drops into the pit.
+      if (e.key === 'x' || e.key === 'X') {
+        const level = levelRef.current;
+        if (!level?.tools.laser || stateRef.current.status !== GameStatus.PLAYING) return;
+        const cur = stateRef.current;
+        const rover = cur.rover;
+        if (!rover.grounded || rover.fuel < LASER_FUEL_COST) return;
+        const centerColumn = Math.floor(rover.position.x + ROVER_WIDTH / 2);
+        const next: GameState = {
+          ...cur,
+          rover: { ...rover, fuel: rover.fuel - LASER_FUEL_COST, grounded: false },
+          samples: exposeSubsurfaceSamples(cur.samples, centerColumn),
+          heightmap: fireLaser(cur.heightmap ?? level.heightmap, centerColumn),
+        };
+        stateRef.current = next;
+        sync(next);
       }
     };
     const onKeyUp = (e: KeyboardEvent) => {
@@ -311,6 +404,7 @@ export function useGame(): UseGame {
       levelRef.current = level;
       keysRef.current.clear();
       stuckSinceRef.current = null;
+      surfaceBreakRef.current = false;
       setResult(null);
       sync(createMissionState(level));
     },
@@ -325,6 +419,7 @@ export function useGame(): UseGame {
     if (!level) return;
     keysRef.current.clear();
     stuckSinceRef.current = null;
+    surfaceBreakRef.current = false;
     setResult(null);
     sync(transition(stateRef.current, 'RESTART', level));
   }, [sync]);

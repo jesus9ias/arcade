@@ -14,6 +14,9 @@
   "hud.gravity": "Gravity",
   "hud.laser": "Laser",
   "hud.turbines": "Turbines",
+  "hud.mode": "Mode",
+  "hud.modePropulsor": "Propulsor",
+  "hud.modeTurbine": "Turbine",
   "hud.missionReady": "Mission complete — escape now!",
 
   "mission.failed": "Mission Failed",
@@ -36,6 +39,7 @@
   "controls.right": "→ : right thruster (move left)",
   "controls.up": "↑ : main thruster (ascend / brake fall)",
   "controls.mode": "M : toggle thruster / turbine mode",
+  "controls.laser": "X : fire laser (carve a pit while grounded)",
   "controls.controls": "C : show controls",
   "controls.pause": "ESC : pause",
   "controls.close": "Close",
