@@ -26,7 +26,7 @@ export default function ControlsOverlay({ onClose }: Props) {
           ))}
         </ul>
         <div className="panel__actions">
-          <button type="button" className="button button--primary" onClick={onClose}>
+          <button type="button" className="button button--primary" onClick={onClose} autoFocus>
             {t('controls.close')}
           </button>
         </div>

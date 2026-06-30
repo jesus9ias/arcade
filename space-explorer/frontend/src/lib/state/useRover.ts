@@ -133,9 +133,10 @@ export function useGame(): UseGame {
   const lastTimeRef = useRef<number>(0);
   const stuckSinceRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
-  // Surface-break grace: switching TURBINE→PROPULSOR while submerged with the up
-  // key held lets the bottom propulsor thrust through the water surface. Stays
-  // active until the rover surfaces, releases up, or switches back to turbines.
+  // Surface-break grace: switching TURBINE→PROPULSOR while submerged with the
+  // ascend key (ArrowDown) held lets the bottom propulsor thrust through the water
+  // surface. Stays active until the rover surfaces, releases the key, or switches
+  // back to turbines.
   const surfaceBreakRef = useRef<boolean>(false);
 
   const sync = useCallback((next: GameState) => {
@@ -183,7 +184,7 @@ export function useGame(): UseGame {
       const heightmap = stateRef.current.heightmap ?? level.heightmap;
       let rover = stateRef.current.rover;
       const keys = keysRef.current;
-      const bottom = keys.has('ArrowUp');
+      const bottom = keys.has('ArrowDown');
       const left = keys.has('ArrowLeft');
       const right = keys.has('ArrowRight');
       const anyThrust = bottom || left || right;
@@ -330,7 +331,7 @@ export function useGame(): UseGame {
   // ---- Keyboard input ------------------------------------------------------
 
   useEffect(() => {
-    const MOVEMENT = new Set(['ArrowUp', 'ArrowLeft', 'ArrowRight']);
+    const MOVEMENT = new Set(['ArrowDown', 'ArrowLeft', 'ArrowRight']);
     const onKeyDown = (e: KeyboardEvent) => {
       if (MOVEMENT.has(e.key)) {
         keysRef.current.add(e.key);
@@ -357,7 +358,7 @@ export function useGame(): UseGame {
         if (
           nextMode === PropulsorMode.PROPULSOR &&
           rover.underwater &&
-          keysRef.current.has('ArrowUp')
+          keysRef.current.has('ArrowDown')
         ) {
           surfaceBreakRef.current = true;
         }

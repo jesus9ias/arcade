@@ -52,11 +52,11 @@ export default function MissionResult({
 
         <div className="panel__actions">
           {escaped ? (
-            <button type="button" className="button button--primary" onClick={onContinue}>
+            <button type="button" className="button button--primary" onClick={onContinue} autoFocus>
               {t('pause.continue')}
             </button>
           ) : (
-            <button type="button" className="button button--primary" onClick={onRestart}>
+            <button type="button" className="button button--primary" onClick={onRestart} autoFocus>
               {t('mission.restart')}
             </button>
           )}

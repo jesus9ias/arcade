@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../i18n/config';
 import { GameStatus } from '../lib/constants';
@@ -19,7 +19,11 @@ export default function App() {
   const { t } = useTranslation();
   const { prefs, warning: prefsWarning, setTheme, setLanguage, dismissWarning } = usePrefs();
   const game = useGame();
+  const { pause, resume } = game;
   const [showControls, setShowControls] = useState(false);
+  // True while the controls overlay is what paused the mission, so closing it
+  // resumes — but opening controls from the pause menu leaves the menu paused.
+  const pausedByControlsRef = useRef(false);
 
   const status = game.state.status;
   const level = game.level;
@@ -29,11 +33,25 @@ export default function App() {
   // 'c' toggles the controls overlay during a mission.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'c' || e.key === 'C') setShowControls((v) => !v);
+      if ((e.key === 'c' || e.key === 'C') && inMission) setShowControls((v) => !v);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [inMission]);
+
+  // Opening the controls overlay pauses an active mission; closing it resumes,
+  // but only when the overlay is what paused it (see pausedByControlsRef).
+  useEffect(() => {
+    if (showControls) {
+      if (status === GameStatus.PLAYING) {
+        pausedByControlsRef.current = true;
+        pause();
+      }
+    } else if (pausedByControlsRef.current) {
+      pausedByControlsRef.current = false;
+      resume();
+    }
+  }, [showControls, status, pause, resume]);
 
   const handleExit = () => {
     setShowControls(false);
@@ -101,7 +119,7 @@ export default function App() {
               showLaser={level.tools.laser}
             />
 
-            {status === GameStatus.PAUSED && (
+            {status === GameStatus.PAUSED && !showControls && (
               <PauseMenu
                 onContinue={game.resume}
                 onRestart={game.restart}

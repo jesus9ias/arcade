@@ -6,7 +6,7 @@
 import { useRef, type ReactNode } from 'react';
 
 interface ThrusterButtonProps {
-  keyName: 'ArrowLeft' | 'ArrowUp' | 'ArrowRight';
+  keyName: 'ArrowLeft' | 'ArrowDown' | 'ArrowRight';
   glyph: string;
   label: string;
 }
@@ -99,7 +99,7 @@ export default function TouchControls({
   return (
     <div className="touch-controls" aria-hidden={false}>
       <ThrusterButton keyName="ArrowLeft" glyph="◀" label="Left thruster" />
-      <ThrusterButton keyName="ArrowUp" glyph="▲" label="Main thruster" />
+      <ThrusterButton keyName="ArrowDown" glyph="▼" label="Main thruster" />
       <ThrusterButton keyName="ArrowRight" glyph="▶" label="Right thruster" />
       {showModeToggle && (
         <TapButton keyName="m" glyph="⇅" label="Toggle propulsor / turbine mode" />

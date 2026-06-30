@@ -37,7 +37,7 @@
   "controls.title": "Controls",
   "controls.left": "← : left thruster (move right)",
   "controls.right": "→ : right thruster (move left)",
-  "controls.up": "↑ : main thruster (ascend / brake fall)",
+  "controls.up": "↓ : main thruster (ascend / brake fall)",
   "controls.mode": "M : toggle thruster / turbine mode",
   "controls.laser": "X : fire laser (carve a pit while grounded)",
   "controls.controls": "C : show controls",

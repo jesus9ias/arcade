@@ -18,7 +18,7 @@ export default function LanguageToggle({ language, onChange }: Props) {
       title={t('nav.language')}
       onClick={() => onChange(next)}
     >
-      {language === Language.EN ? 'EN' : 'ES'}
+      {next.toUpperCase()}
     </button>
   );
 }

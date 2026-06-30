@@ -197,7 +197,7 @@ export default function GameCanvas({ state, level }: Props) {
   // View-only key tracking for flame rendering (no game logic here).
   useEffect(() => {
     const set = (key: string, on: boolean) => {
-      if (key === 'ArrowUp') thrustersRef.current.bottom = on;
+      if (key === 'ArrowDown') thrustersRef.current.bottom = on;
       if (key === 'ArrowLeft') thrustersRef.current.left = on;
       if (key === 'ArrowRight') thrustersRef.current.right = on;
     };

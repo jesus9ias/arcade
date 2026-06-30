@@ -13,7 +13,7 @@ export default function PauseMenu({ onContinue, onRestart, onExit }: Props) {
       <div className="panel">
         <h2 className="panel__title">{t('pause.title')}</h2>
         <div className="panel__actions">
-          <button type="button" className="button button--primary" onClick={onContinue}>
+          <button type="button" className="button button--primary" onClick={onContinue} autoFocus>
             {t('pause.continue')}
           </button>
           <button type="button" className="button" onClick={onRestart}>

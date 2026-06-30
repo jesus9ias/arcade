@@ -37,7 +37,7 @@
   "controls.title": "Controles",
   "controls.left": "← : propulsor izquierdo (mover a la derecha)",
   "controls.right": "→ : propulsor derecho (mover a la izquierda)",
-  "controls.up": "↑ : propulsor principal (ascender / frenar caída)",
+  "controls.up": "↓ : propulsor principal (ascender / frenar caída)",
   "controls.mode": "M : alternar modo propulsor / turbina",
   "controls.laser": "X : disparar láser (excavar un pozo aterrizado)",
   "controls.controls": "C : mostrar controles",
