@@ -106,7 +106,9 @@ export default function App() {
               />
             )}
 
-            {(status === GameStatus.MISSION_FAILED || status === GameStatus.ESCAPED) && (
+            {(status === GameStatus.MISSION_FAILED ||
+              status === GameStatus.MISSION_ABORTED ||
+              status === GameStatus.ESCAPED) && (
               <MissionResult
                 status={status}
                 result={game.result}

@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { LEVELS, lastLevelId } from '../lib/levels';
 import type { LevelConfig } from '../lib/levels';
+import { WORLD_TYPE_ICON, DEFAULT_WORLD_ICON } from '../lib/constants';
 import { isLevelUnlocked, type LevelProgress } from '../lib/progress/progress';
-import { formatTime } from './format';
+import { formatTime, formatLevelId } from './format';
 
 interface Props {
   progress: LevelProgress[];
@@ -36,20 +37,35 @@ export default function LevelSelectScreen({ progress, onSelect }: Props) {
                 aria-disabled={!unlocked}
                 onClick={() => unlocked && onSelect(level)}
               >
-                <span className="level-card__name">{level.name}</span>
+                <span className="level-card__name">
+                  <span className="level-card__icon" aria-hidden="true">
+                    {level.worldType ? WORLD_TYPE_ICON[level.worldType] : DEFAULT_WORLD_ICON}
+                  </span>
+                  <span className="level-card__id">{formatLevelId(level.id)}</span>
+                  <span className="level-card__title">{level.name}</span>
+                </span>
                 <span className="level-card__meta">
                   {t('planet.distance', { value: level.distanceFromEarth })}
                 </span>
                 <span className="level-card__meta">
                   {t('planet.gravity', { value: level.gravity })}
                 </span>
-                <span className="level-card__best">
-                  {unlocked
-                    ? best === null
+                {unlocked ? (
+                  <span className="level-card__best">
+                    {best === null
                       ? t('levelSelect.bestTime', { time: t('levelSelect.noTime') })
-                      : t('levelSelect.bestTime', { time: formatTime(best) })
-                    : t('levelSelect.locked')}
-                </span>
+                      : t('levelSelect.bestTime', { time: formatTime(best) })}
+                  </span>
+                ) : (
+                  <span
+                    className="level-card__lock"
+                    role="img"
+                    aria-label={t('levelSelect.locked')}
+                    title={t('levelSelect.locked')}
+                  >
+                    🔒
+                  </span>
+                )}
               </button>
             </li>
           );

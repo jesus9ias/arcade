@@ -1,4 +1,5 @@
 import type { LevelConfig } from './types';
+import { WorldType } from '../constants';
 import { composeHeightmap, segmentCenter, type TerrainSegment } from './builder';
 
 // Level 1 — Verdania. Gentle rolling hills, two ample flat landing zones, no
@@ -17,6 +18,7 @@ const SEGMENTS: TerrainSegment[] = [
 export const VERDANIA: LevelConfig = {
   id: 1,
   name: 'Verdania',
+  worldType: WorldType.VERDANT,
   distanceFromEarth: '4.2 light years',
   gravity: 0.5,
   fuel: 1200,

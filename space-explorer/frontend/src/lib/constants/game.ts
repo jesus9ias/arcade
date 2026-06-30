@@ -5,6 +5,7 @@ export const GameStatus = {
   PLAYING: 'PLAYING',
   PAUSED: 'PAUSED',
   MISSION_FAILED: 'MISSION_FAILED',
+  MISSION_ABORTED: 'MISSION_ABORTED',
   ESCAPED: 'ESCAPED',
 } as const;
 export type GameStatus = (typeof GameStatus)[keyof typeof GameStatus];

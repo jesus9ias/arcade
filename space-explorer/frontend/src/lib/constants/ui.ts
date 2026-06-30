@@ -1,6 +1,22 @@
 // Presentation constants for the canvas renderer. Pure colors/sizes used by the
 // view layer only; game rules never read these.
 
+import { WorldType } from './world';
+
+/**
+ * Level-select icon per world type. The Record is exhaustive: adding a WorldType
+ * forces a matching icon here, so the catalog never drifts. Used in the level
+ * list alongside the `#NNN` level id.
+ */
+export const WORLD_TYPE_ICON: Record<WorldType, string> = {
+  [WorldType.VERDANT]: '🌿',
+  [WorldType.VOLCANIC]: '🌋',
+  [WorldType.FROZEN]: '❄️',
+};
+
+/** Fallback icon for a level that declares no world type. */
+export const DEFAULT_WORLD_ICON = '🪐';
+
 /** Pixel width the scene is rendered at; the canvas scales game units to fit. */
 export const VIEWPORT_WIDTH = 960;
 

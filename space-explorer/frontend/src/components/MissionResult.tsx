@@ -23,11 +23,20 @@ export default function MissionResult({
 }: Props) {
   const { t } = useTranslation();
   const escaped = status === GameStatus.ESCAPED;
+  const aborted = status === GameStatus.MISSION_ABORTED;
+
+  const title = escaped
+    ? t('mission.escaped')
+    : aborted
+      ? t('mission.aborted')
+      : t('mission.failed');
 
   return (
     <div className="overlay" role="dialog" aria-modal="true">
       <div className="panel">
-        <h2 className="panel__title">{escaped ? t('mission.escaped') : t('mission.failed')}</h2>
+        <h2 className="panel__title">{title}</h2>
+
+        {aborted && <p className="panel__hint">{t('mission.abortedHint')}</p>}
 
         {escaped && result && (
           <div className="panel__stats">

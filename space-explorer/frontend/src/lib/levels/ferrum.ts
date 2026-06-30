@@ -1,4 +1,5 @@
 import type { LevelConfig } from './types';
+import { WorldType } from '../constants';
 import {
   composeHeightmap,
   segmentCenter,
@@ -29,6 +30,7 @@ const STARTS = segmentStarts(SEGMENTS);
 export const FERRUM: LevelConfig = {
   id: 2,
   name: 'Ferrum',
+  worldType: WorldType.VOLCANIC,
   distanceFromEarth: '8.7 light years',
   gravity: 0.9,
   fuel: 900,

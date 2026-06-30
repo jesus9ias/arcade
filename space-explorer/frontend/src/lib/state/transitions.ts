@@ -74,8 +74,9 @@ export function createLevelSelectState(): GameState {
 
 /**
  * Pure status machine. SELECT_LEVEL and RESTART rebuild the mission from `level`.
- * ESCAPE branches on whether all samples were collected (complete vs. abort).
- * CONTINUE resumes from PAUSED but returns ESCAPED to the level select.
+ * ESCAPE branches on whether all samples were collected: complete (ESCAPED) vs.
+ * abort (MISSION_ABORTED). CONTINUE resumes from PAUSED but returns ESCAPED to
+ * the level select.
  */
 export function transition(
   state: GameState,
@@ -108,7 +109,7 @@ export function transition(
         ...state,
         status: state.allSamplesCollected
           ? GameStatus.ESCAPED
-          : GameStatus.LEVEL_SELECT,
+          : GameStatus.MISSION_ABORTED,
       };
     default:
       return state;

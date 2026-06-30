@@ -1,6 +1,8 @@
 // Level-configuration types. A level is pure data consumed by the engine and
 // the renderer; adding a planet requires only a new LevelConfig object.
 
+import type { WorldType } from '../constants';
+
 export interface WaterZone {
   startColumn: number;
   endColumn: number; // inclusive
@@ -23,6 +25,7 @@ export interface PlanetTheme {
 export interface LevelConfig {
   id: number;
   name: string;
+  worldType?: WorldType; // drives the level-select icon; all bundled levels set it
   distanceFromEarth: string; // flavour, e.g. "4.2 light years"
   gravity: number; // multiplier vs Earth
   fuel: number; // initial propulsor fuel

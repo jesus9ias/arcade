@@ -11,7 +11,7 @@ Game-specific working instructions for Claude Code. This game inherits the monor
 - Pilot a rover that moves **only through its thrusters** — there is no wheeled ground movement. Descend through the atmosphere against gravity and limited fuel, land gently on flat zones to collect mineral samples, then escape by firing upward off the top of the scene.
 - Land safely only when contact is within a valid flat zone (width ≥ `ROVER_WIDTH`, rover centered), `vy ≤ MAX_LANDING_SPEED`, and `|vx| ≤ MAX_LANDING_LATERAL_SPEED`. Any other terrain contact destroys the rover.
 - Three thrusters (left → pushes right, right → pushes left, bottom → up) may fire together; each costs `FUEL_CONSUMPTION_RATE` fuel/s. Propulsors only thrust in the atmosphere.
-- Escape with **all** samples → level complete (best time saved if better). Exit the top with samples missing → **abort** to level select, no save. Unsafe contact or stuck-underwater timeout → **mission failed**.
+- Escape with **all** samples → level complete (best time saved if better). Exit the top with samples missing → **abort** (its own `MISSION_ABORTED` screen, no save). Unsafe contact, or being stranded with no fuel past `STUCK_TIMEOUT_MS` (on land, or submerged on a turbine-less level) → **mission failed**.
 - 3 config-driven planets (Verdania, Ferrum, Glacius), unlocked sequentially. Bilingual (English / Spanish), light/dark theme.
 - Static frontend only — **no backend**.
 
@@ -61,7 +61,7 @@ space-explorer/
 │       ├── styles/          # global.css (space palette, both themes)
 │       └── lib/
 │           ├── constants/   # game, scene, rover, physics, mission, storage,
-│           │                #   preferences, validation, ui — all literals here
+│           │                #   preferences, validation, world, ui — all literals here
 │           ├── physics/     # physics.ts: applyGravity, applyPropulsor,
 │           │                #   applyTurbine, integratePosition (pure)
 │           ├── terrain/     # terrain.ts: getHeight, isFlatZone, isValidLandingZone,
@@ -90,7 +90,7 @@ Architecture is **layer-based extended with domain folders** (the spec's declare
 5. **Add any new UI strings** to both `i18n/en.json` and `i18n/es.json`.
 6. **Validate:** `npm run test --workspace space-explorer/frontend`, then `npm run typecheck --workspace space-explorer/frontend`, then `npm run build --workspace space-explorer/frontend`.
 
-To add a planet (Phase 2), add one `LevelConfig` object under `lib/levels/` and register it in `lib/levels/index.ts` — no engine changes. Use `builder.ts` (`composeHeightmap`, `segmentCenter`) so sample columns stay pinned to flat-zone centers.
+To add a planet (Phase 2), add one `LevelConfig` object under `lib/levels/` and register it in `lib/levels/index.ts` — no engine changes. Use `builder.ts` (`composeHeightmap`, `segmentCenter`) so sample columns stay pinned to flat-zone centers. Set the level's `worldType` (drives the level-select icon): reuse an existing value from `constants/world.ts`, or add a new `WorldType` plus its entry in `WORLD_TYPE_ICON` (`constants/ui.ts`) — that map is an exhaustive `Record<WorldType, string>`, so a new world type will not compile without an icon. The level id renders as `#NNN` (zero-padded) from the numeric `id`; locked levels show a 🔒 icon. See `spec.md` → "World Types & Level-Select Display" for the catalog.
 
 If a change contradicts an existing scenario or decision, stop, update the documentation first, then change the code.
 

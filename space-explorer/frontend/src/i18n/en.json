@@ -17,6 +17,8 @@
   "hud.missionReady": "Mission complete — escape now!",
 
   "mission.failed": "Mission Failed",
+  "mission.aborted": "Mission Aborted",
+  "mission.abortedHint": "You left the planet without collecting every sample.",
   "mission.escaped": "Mission Complete!",
   "mission.time": "Time: {{time}}",
   "mission.bestTime": "Best: {{time}}",

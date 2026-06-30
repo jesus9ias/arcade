@@ -99,7 +99,8 @@ Touching terrain during lateral movement (while not in a downward landing approa
 
 1. Rover contacts terrain unsafely (wrong zone, excessive speed, or lateral collision).
 2. Rover is submerged on a level without turbines with 0 fuel (stuck, no movement possible) — MISSION_FAILED triggers after `STUCK_TIMEOUT_MS` of no thrust capability.
-3. Fuel exhausted before escape is achieved and rover crashes.
+3. Rover is grounded on land with 0 fuel (stranded — propulsors cannot fire, so it can neither take off nor escape) — MISSION_FAILED triggers after `STUCK_TIMEOUT_MS`.
+4. Fuel exhausted before escape is achieved and rover crashes.
 
 On failure: best time is not affected. Player may restart or exit to level select.
 
@@ -152,6 +153,7 @@ States:
   PLAYING         → mission in progress; physics running
   PAUSED          → physics suspended; options menu visible
   MISSION_FAILED  → rover destroyed or stranded; failure screen
+  MISSION_ABORTED → rover exited top edge without all samples; aborted screen
   ESCAPED         → rover exited top edge with all samples; success screen
 
 Transitions:
@@ -162,9 +164,11 @@ Transitions:
   PAUSED         → LEVEL_SELECT   : Exit to Missions chosen (no progress saved)
   PLAYING        → MISSION_FAILED : rover destroyed or stuck timeout
   PLAYING        → ESCAPED        : rover exits top with all samples collected
-  PLAYING        → LEVEL_SELECT   : rover exits top without all samples (abort)
+  PLAYING        → MISSION_ABORTED: rover exits top without all samples (abort)
   MISSION_FAILED → PLAYING        : Restart chosen (mission resets)
   MISSION_FAILED → LEVEL_SELECT   : Exit chosen
+  MISSION_ABORTED→ PLAYING        : Restart chosen (mission resets)
+  MISSION_ABORTED→ LEVEL_SELECT   : Exit to Missions chosen (no progress saved)
   ESCAPED        → LEVEL_SELECT   : Continue (next level unlocked if applicable)
 ```
 
@@ -175,7 +179,7 @@ Transitions:
 ### Core types
 
 ```typescript
-type GameStatus = 'LEVEL_SELECT' | 'PLAYING' | 'PAUSED' | 'MISSION_FAILED' | 'ESCAPED';
+type GameStatus = 'LEVEL_SELECT' | 'PLAYING' | 'PAUSED' | 'MISSION_FAILED' | 'MISSION_ABORTED' | 'ESCAPED';
 type PropulsorMode = 'PROPULSOR' | 'TURBINE';
 
 interface Vector2 {
@@ -233,9 +237,12 @@ interface PlanetTheme {
   waterColor: string;
 }
 
+type WorldType = 'VERDANT' | 'VOLCANIC' | 'FROZEN'; // extend the catalog per new archetype
+
 interface LevelConfig {
   id: number;
   name: string;
+  worldType?: WorldType;      // drives the level-select icon; all bundled levels set it
   distanceFromEarth: string;  // flavour, e.g. "4.2 light years"
   gravity: number;            // multiplier vs Earth (e.g. 0.5, 1.3)
   fuel: number;               // initial propulsor fuel
@@ -272,6 +279,25 @@ In-progress `GameState` is intentionally **not** persisted.
 
 ---
 
+## World Types & Level-Select Display
+
+Each level declares a `worldType` that drives the icon shown in the level list. The level list renders, per card: the **world icon**, the **level id** formatted as `#NNN` (zero-padded to three digits — `#001`, `#002`, …), then the planet **name**, followed by the best time (or a 🔒 lock icon when the level is still locked).
+
+The world-type → icon catalog (single source of truth: `frontend/src/lib/constants/ui.ts`):
+
+| World type | Meaning | Icon |
+|---|---|---|
+| `VERDANT` | Lush, vegetated worlds | 🌿 |
+| `VOLCANIC` | Molten, iron-rich, scorched worlds | 🌋 |
+| `FROZEN` | Icy worlds with frozen lakes | ❄️ |
+| _(none declared)_ | Fallback for a level without a `worldType` | 🪐 |
+
+**Adding a new level (and possibly a new world type):**
+
+1. Set the new level's `worldType` to an existing catalog value when it fits.
+2. If the planet is a new archetype, add a value to `WorldType` (`constants/world.ts`) and a matching entry to `WORLD_TYPE_ICON` (`constants/ui.ts`). The icon map is an exhaustive `Record<WorldType, string>`, so TypeScript will not compile a new world type until its icon is supplied — keep this table in sync with that map.
+3. The level id (`#NNN`) is derived from the level's numeric `id`; no extra field is needed.
+
 ## Level Definitions (Initial 3 Planets)
 
 ### Level 1 — Verdania
@@ -279,6 +305,7 @@ In-progress `GameState` is intentionally **not** persisted.
 | Property | Value |
 |---|---|
 | Name | Verdania |
+| World type | `VERDANT` 🌿 |
 | Distance | 4.2 light years |
 | Gravity | 0.5× |
 | Fuel | 1 200 units |
@@ -296,6 +323,7 @@ Terrain: gently rolling hills with two ample flat landing zones. Scene width = v
 | Property | Value |
 |---|---|
 | Name | Ferrum |
+| World type | `VOLCANIC` 🌋 |
 | Distance | 8.7 light years |
 | Gravity | 0.9× |
 | Fuel | 900 units |
@@ -315,9 +343,10 @@ If the rover falls into the lake with no turbines and no fuel: stuck with no mov
 | Property | Value |
 |---|---|
 | Name | Glacius |
+| World type | `FROZEN` ❄️ |
 | Distance | 15.3 light years |
 | Gravity | 1.3× |
-| Fuel | 700 units |
+| Fuel | 2000 units |
 | Electricity | 400 units |
 | Tools | Water turbines |
 | Samples | 4 (3 on land, 1 underwater) |
@@ -350,6 +379,8 @@ Terrain: jagged ridges with two large lakes. Three land samples on narrow flat z
   "hud.missionReady": "Mission complete — escape now!",
 
   "mission.failed": "Mission Failed",
+  "mission.aborted": "Mission Aborted",
+  "mission.abortedHint": "You left the planet without collecting every sample.",
   "mission.escaped": "Mission Complete!",
   "mission.time": "Time: {{time}}",
   "mission.bestTime": "Best: {{time}}",
@@ -617,8 +648,19 @@ Feature: Escape from the planet
   Scenario: Exiting the top edge before all samples aborts the mission
     Given at least one sample is not yet collected
     When the rover exits the top edge
-    Then the game transitions to LEVEL_SELECT
+    Then the game transitions to MISSION_ABORTED
+    And the aborted screen offers Restart and Exit to Missions
     And no progress is saved for this attempt
+
+  Scenario: Restart from the aborted screen resets the mission
+    Given the game is in MISSION_ABORTED
+    When the player chooses Restart
+    Then the mission resets to initial state and transitions to PLAYING
+
+  Scenario: Exit to Missions from the aborted screen goes to level select
+    Given the game is in MISSION_ABORTED
+    When the player chooses Exit to Missions
+    Then the game transitions to LEVEL_SELECT with no progress saved
 
   Scenario: Best time not affected by abort or failure
     Given level 1 has a best time of 120 000 ms
@@ -647,6 +689,11 @@ Feature: Mission failure conditions
 
   Scenario: Rover stuck underwater without turbines fails after timeout
     Given the rover is submerged on level 2 (no turbines) with 0 fuel
+    When STUCK_TIMEOUT_MS elapses with no thrust possible
+    Then the game transitions to MISSION_FAILED
+
+  Scenario: Rover stranded on the ground without fuel fails after timeout
+    Given the rover is grounded on land with 0 fuel
     When STUCK_TIMEOUT_MS elapses with no thrust possible
     Then the game transitions to MISSION_FAILED
 
@@ -905,10 +952,12 @@ Feature: Input validation and security
 | `T-ST-05` | PAUSED → LEVEL_SELECT on exit | `transition(PAUSED, 'EXIT')` | `status: LEVEL_SELECT` |
 | `T-ST-06` | PLAYING → MISSION_FAILED on destroy | `transition(PLAYING, 'DESTROY')` | `status: MISSION_FAILED` |
 | `T-ST-07` | PLAYING → ESCAPED when all samples collected | `transition(PLAYING, 'ESCAPE')` with `allSamplesCollected: true` | `status: ESCAPED` |
-| `T-ST-08` | PLAYING → LEVEL_SELECT when aborting | `transition(PLAYING, 'ESCAPE')` with `allSamplesCollected: false` | `status: LEVEL_SELECT` |
+| `T-ST-08` | PLAYING → MISSION_ABORTED when aborting | `transition(PLAYING, 'ESCAPE')` with `allSamplesCollected: false` | `status: MISSION_ABORTED` |
 | `T-ST-09` | MISSION_FAILED → PLAYING on restart | `transition(MISSION_FAILED, 'RESTART')` | `status: PLAYING`; mission reset |
 | `T-ST-10` | MISSION_FAILED → LEVEL_SELECT on exit | `transition(MISSION_FAILED, 'EXIT')` | `status: LEVEL_SELECT` |
 | `T-ST-11` | ESCAPED → LEVEL_SELECT on continue | `transition(ESCAPED, 'CONTINUE')` | `status: LEVEL_SELECT` |
+| `T-ST-12` | MISSION_ABORTED → PLAYING on restart | `transition(MISSION_ABORTED, 'RESTART')` | `status: PLAYING`; mission reset |
+| `T-ST-13` | MISSION_ABORTED → LEVEL_SELECT on exit | `transition(MISSION_ABORTED, 'EXIT')` | `status: LEVEL_SELECT` |
 
 ### localStorage validation
 
@@ -1040,3 +1089,6 @@ Stages are executed in strict order. Claude Code stops after each stage and wait
 | 2026-06-29 | Sample collection uses a controller-side reach tolerance; the pure rule stays exact-match | `tryCollectSample(samples, column)` matches the sample's flat-zone center exactly (testable, deterministic). The controller maps a safe landing to the nearest uncollected sample within `ROVER_WIDTH / 2`, so landing anywhere on the zone collects it without weakening the pure function's contract |
 | 2026-06-29 | Phase 1 controller is propulsor-only; `applyTurbine` is implemented but unwired | The pure `applyTurbine` is written (it is unit-tested) and Glacius ships with its turbine flags and underwater sample as data, but no turbine/laser controller wiring or `m`-key mode switching is added in Phase 1. Consequently Glacius's underwater sample is gated until Phase 2 (Stage 5), honoring "the core game ships without advanced tools" |
 | 2026-06-29 | Rendering at 1 game unit = 1 px with a horizontal-only camera | The canvas is `960×600` px; the camera offset is `0` when the scene fits the viewport (Verdania, static) and tracks the rover otherwise (Ferrum, Glacius), clamped at the scene edges. No vertical scroll — escape is the rover leaving the top edge |
+| 2026-06-29 | Level cards show a `worldType` icon + `#NNN` id; locked cards show a 🔒 icon | A per-level `worldType` (optional on the type, set by every bundled level) maps to an icon via an exhaustive `Record<WorldType, string>`, so a new world type cannot compile without an icon. The numeric `id` renders as zero-padded `#NNN`. `worldType` is optional only so the Stage-2 test fixtures stay untouched; a level without one falls back to 🪐 |
+| 2026-06-29 | Abort now has its own `MISSION_ABORTED` state and screen (supersedes the earlier "abort is a neutral outcome, no screen") | Exiting the top edge without all samples no longer drops silently to the level select. It transitions to `MISSION_ABORTED`, which shows a modal titled "Mission Aborted" with **Restart** and **Exit to Missions** (same shape as the failure screen, distinct title). Still no progress saved and best time untouched. `transition(PLAYING, 'ESCAPE')` now branches to `MISSION_ABORTED` instead of `LEVEL_SELECT` (T-ST-08 updated; T-ST-12/13 added) |
+| 2026-06-29 | Grounded on land with 0 fuel is a stranded-failure after `STUCK_TIMEOUT_MS` | A rover at rest on land with no fuel can never thrust again — it can neither take off nor escape. Rather than leaving the player trapped, the controller treats it like the submerged-stuck case and fails the mission after the same timeout. Detection is controller-side (time-based), mirroring the existing underwater-stuck check |

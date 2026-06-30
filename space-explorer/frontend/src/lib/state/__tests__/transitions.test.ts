@@ -89,9 +89,9 @@ describe('state/transitions', () => {
     expect(transition(state, 'ESCAPE').status).toBe(GameStatus.ESCAPED);
   });
 
-  it('T-ST-08: PLAYING → LEVEL_SELECT when aborting with samples missing', () => {
+  it('T-ST-08: PLAYING → MISSION_ABORTED when aborting with samples missing', () => {
     const state = makeState({ status: GameStatus.PLAYING, allSamplesCollected: false });
-    expect(transition(state, 'ESCAPE').status).toBe(GameStatus.LEVEL_SELECT);
+    expect(transition(state, 'ESCAPE').status).toBe(GameStatus.MISSION_ABORTED);
   });
 
   it('T-ST-09: MISSION_FAILED → PLAYING on restart (mission reset)', () => {
@@ -112,6 +112,22 @@ describe('state/transitions', () => {
 
   it('T-ST-11: ESCAPED → LEVEL_SELECT on continue', () => {
     expect(transition(makeState({ status: GameStatus.ESCAPED }), 'CONTINUE').status).toBe(
+      GameStatus.LEVEL_SELECT,
+    );
+  });
+
+  it('T-ST-12: MISSION_ABORTED → PLAYING on restart (mission reset)', () => {
+    const next = transition(
+      makeState({ status: GameStatus.MISSION_ABORTED, elapsedMs: 9000 }),
+      'RESTART',
+      makeLevel(1),
+    );
+    expect(next.status).toBe(GameStatus.PLAYING);
+    expect(next.elapsedMs).toBe(0);
+  });
+
+  it('T-ST-13: MISSION_ABORTED → LEVEL_SELECT on exit', () => {
+    expect(transition(makeState({ status: GameStatus.MISSION_ABORTED }), 'EXIT').status).toBe(
       GameStatus.LEVEL_SELECT,
     );
   });

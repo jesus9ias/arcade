@@ -7,3 +7,8 @@ export function formatTime(ms: number): string {
   const tenths = Math.floor((ms % 1000) / 100);
   return `${minutes}:${seconds.toString().padStart(2, '0')}.${tenths}`;
 }
+
+/** Display id for a level, zero-padded to three digits: 1 → "#001". */
+export function formatLevelId(id: number): string {
+  return `#${id.toString().padStart(3, '0')}`;
+}

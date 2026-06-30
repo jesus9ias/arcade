@@ -149,7 +149,7 @@ export function useGame(): UseGame {
   }, [sync]);
 
   const abortMission = useCallback(() => {
-    sync(transition(stateRef.current, 'ESCAPE')); // !allSamplesCollected → LEVEL_SELECT
+    sync(transition(stateRef.current, 'ESCAPE')); // !allSamplesCollected → MISSION_ABORTED
   }, [sync]);
 
   const failMission = useCallback(() => {
@@ -229,8 +229,13 @@ export function useGame(): UseGame {
         }
       }
 
-      // Stuck underwater on a turbine-less level with no fuel.
-      const stuck = rover.underwater && !level.tools.waterTurbines && rover.fuel <= 0;
+      // Stranded with no way to move: grounded on land with no fuel (propulsors
+      // cannot fire, so no take-off and no escape), or submerged on a turbine-less
+      // level with no fuel. Fail after the timeout so the player is never trapped.
+      const strandedOnLand = rover.grounded && !rover.underwater && rover.fuel <= 0;
+      const strandedUnderwater =
+        rover.underwater && !level.tools.waterTurbines && rover.fuel <= 0;
+      const stuck = strandedOnLand || strandedUnderwater;
       const now = performance.now();
       if (stuck) {
         if (stuckSinceRef.current === null) stuckSinceRef.current = now;

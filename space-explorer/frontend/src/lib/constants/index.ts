@@ -6,4 +6,5 @@ export * from './mission';
 export * from './storage';
 export * from './preferences';
 export * from './validation';
+export * from './world';
 export * from './ui';

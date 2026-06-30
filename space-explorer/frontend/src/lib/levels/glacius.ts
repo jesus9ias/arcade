@@ -1,4 +1,5 @@
 import type { LevelConfig } from './types';
+import { WorldType } from '../constants';
 import {
   composeHeightmap,
   segmentCenter,
@@ -7,8 +8,9 @@ import {
 } from './builder';
 
 // Level 3 — Glacius. Jagged ridges with two frozen lakes, high gravity. Three
-// land samples on narrow flats; one sample on the floor of the shallower lake
-// (reachable with turbines — Phase 2). Widest scene; the camera tracks the rover.
+// land samples on narrow flats. Widest scene; the camera tracks the rover.
+// (Phase 2 will add a fourth sample on the floor of lake A, reachable with
+// turbines; it is omitted for now so the level is completable propulsor-only.)
 
 const SEGMENTS: TerrainSegment[] = [
   { width: 70, from: 220 }, // 0: opening flat (sample 1)
@@ -16,7 +18,7 @@ const SEGMENTS: TerrainSegment[] = [
   { width: 120, from: 440, to: 160 }, // 2: down
   { width: 50, from: 160 }, // 3: narrow flat (sample 2)
   { width: 100, from: 160, to: 90 }, // 4: into shallow lake A
-  { width: 180, from: 90 }, // 5: lake A floor (sample 4 — underwater)
+  { width: 180, from: 90 }, // 5: lake A floor (Phase 2 underwater sample)
   { width: 100, from: 90, to: 170 }, // 6: out of lake A
   { width: 120, from: 170, to: 420 }, // 7: ridge up
   { width: 120, from: 420, to: 170 }, // 8: down
@@ -32,15 +34,16 @@ const STARTS = segmentStarts(SEGMENTS);
 export const GLACIUS: LevelConfig = {
   id: 3,
   name: 'Glacius',
+  worldType: WorldType.FROZEN,
   distanceFromEarth: '15.3 light years',
   gravity: 1.3,
-  fuel: 700,
+  fuel: 1200,
   electricity: 400,
   tools: { laser: false, waterTurbines: true },
   heightmap: composeHeightmap(SEGMENTS),
   waterZones: [
     {
-      // Shallow lake A — holds the underwater sample.
+      // Shallow lake A (will hold the underwater sample in Phase 2).
       startColumn: STARTS[4],
       endColumn: STARTS[7] - 1,
       surfaceHeight: 150,
@@ -56,7 +59,6 @@ export const GLACIUS: LevelConfig = {
     { id: 'glacius-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false },
     { id: 'glacius-2', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false },
     { id: 'glacius-3', columnIndex: segmentCenter(SEGMENTS, 9), subsurface: false },
-    { id: 'glacius-4', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false },
   ],
   theme: {
     skyColorTop: '#bfe6f0',
