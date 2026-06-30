@@ -1,5 +1,5 @@
 import type { LevelConfig } from './types';
-import { WorldType } from '../constants';
+import { WorldType, SampleShape } from '../constants';
 import {
   composeHeightmap,
   segmentCenter,
@@ -38,10 +38,10 @@ export const TOXINA: LevelConfig = {
   heightmap: composeHeightmap(SEGMENTS),
   waterZones: [{ startColumn: STARTS[4], endColumn: STARTS[7] - 1, surfaceHeight: 140 }],
   samples: [
-    { id: 'toxina-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false },
-    { id: 'toxina-2', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false },
-    { id: 'toxina-3', columnIndex: segmentCenter(SEGMENTS, 8), subsurface: false },
-    { id: 'toxina-4', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false },
+    { id: 'toxina-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false, shape: SampleShape.GLOB },
+    { id: 'toxina-2', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false, shape: SampleShape.GLOB },
+    { id: 'toxina-3', columnIndex: segmentCenter(SEGMENTS, 8), subsurface: false, shape: SampleShape.GLOB },
+    { id: 'toxina-4', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false, shape: SampleShape.GLOB },
   ],
   theme: {
     skyColorTop: '#16210a',

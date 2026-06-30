@@ -1,5 +1,5 @@
 import type { LevelConfig } from './types';
-import { WorldType } from '../constants';
+import { WorldType, SampleShape } from '../constants';
 import { composeHeightmap, segmentCenter, type TerrainSegment } from './builder';
 
 // Level 1 — Verdania. Gentle rolling hills, two ample flat landing zones, no
@@ -27,8 +27,8 @@ export const VERDANIA: LevelConfig = {
   heightmap: composeHeightmap(SEGMENTS),
   waterZones: [],
   samples: [
-    { id: 'verdania-1', columnIndex: segmentCenter(SEGMENTS, 1), subsurface: false },
-    { id: 'verdania-2', columnIndex: segmentCenter(SEGMENTS, 4), subsurface: false },
+    { id: 'verdania-1', columnIndex: segmentCenter(SEGMENTS, 1), subsurface: false, shape: SampleShape.POD },
+    { id: 'verdania-2', columnIndex: segmentCenter(SEGMENTS, 4), subsurface: false, shape: SampleShape.POD },
   ],
   theme: {
     skyColorTop: '#1a1346',

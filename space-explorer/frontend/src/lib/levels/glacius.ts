@@ -1,5 +1,5 @@
 import type { LevelConfig } from './types';
-import { WorldType } from '../constants';
+import { WorldType, SampleShape } from '../constants';
 import {
   composeHeightmap,
   segmentCenter,
@@ -57,14 +57,14 @@ export const GLACIUS: LevelConfig = {
     },
   ],
   samples: [
-    { id: 'glacius-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false },
-    { id: 'glacius-2', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false },
-    { id: 'glacius-3', columnIndex: segmentCenter(SEGMENTS, 9), subsurface: false },
+    { id: 'glacius-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false, shape: SampleShape.SHARD },
+    { id: 'glacius-2', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false, shape: SampleShape.SHARD },
+    { id: 'glacius-3', columnIndex: segmentCenter(SEGMENTS, 9), subsurface: false, shape: SampleShape.SHARD },
     // Underwater on the floor of lake A — descend gently with turbines to land.
     // Not subsurface (no laser needed); standard landing mechanics apply.
-    { id: 'glacius-4', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false },
+    { id: 'glacius-4', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false, shape: SampleShape.SHARD },
     // Buried under the flat tail — fire the laser to carve a pit, then land in it.
-    { id: 'glacius-5', columnIndex: segmentCenter(SEGMENTS, 13), subsurface: true },
+    { id: 'glacius-5', columnIndex: segmentCenter(SEGMENTS, 13), subsurface: true, shape: SampleShape.CRYSTAL },
   ],
   theme: {
     skyColorTop: '#bfe6f0',

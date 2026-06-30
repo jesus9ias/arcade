@@ -1,5 +1,5 @@
 import type { LevelConfig } from './types';
-import { WorldType } from '../constants';
+import { WorldType, SampleShape } from '../constants';
 import { composeHeightmap, segmentCenter, type TerrainSegment } from './builder';
 
 // Level 10 — Procella. Wind-blasted high-gravity world, no tools. Four samples on
@@ -32,10 +32,10 @@ export const PROCELLA: LevelConfig = {
   heightmap: composeHeightmap(SEGMENTS),
   waterZones: [],
   samples: [
-    { id: 'procella-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false },
-    { id: 'procella-2', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false },
-    { id: 'procella-3', columnIndex: segmentCenter(SEGMENTS, 6), subsurface: false },
-    { id: 'procella-4', columnIndex: segmentCenter(SEGMENTS, 9), subsurface: false },
+    { id: 'procella-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false, shape: SampleShape.EMBER },
+    { id: 'procella-2', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false, shape: SampleShape.ROCK },
+    { id: 'procella-3', columnIndex: segmentCenter(SEGMENTS, 6), subsurface: false, shape: SampleShape.EMBER },
+    { id: 'procella-4', columnIndex: segmentCenter(SEGMENTS, 9), subsurface: false, shape: SampleShape.ROCK },
   ],
   theme: {
     skyColorTop: '#14181f',

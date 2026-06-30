@@ -1,5 +1,5 @@
 import type { LevelConfig } from './types';
-import { WorldType } from '../constants';
+import { WorldType, SampleShape } from '../constants';
 import {
   composeHeightmap,
   segmentCenter,
@@ -44,12 +44,12 @@ export const FERROX: LevelConfig = {
     { startColumn: STARTS[10], endColumn: STARTS[13] - 1, surfaceHeight: 160 },
   ],
   samples: [
-    { id: 'ferrox-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false },
-    { id: 'ferrox-2', columnIndex: segmentCenter(SEGMENTS, 9), subsurface: false },
-    { id: 'ferrox-3', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false },
-    { id: 'ferrox-4', columnIndex: segmentCenter(SEGMENTS, 11), subsurface: false },
+    { id: 'ferrox-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false, shape: SampleShape.NUGGET },
+    { id: 'ferrox-2', columnIndex: segmentCenter(SEGMENTS, 9), subsurface: false, shape: SampleShape.NUGGET },
+    { id: 'ferrox-3', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false, shape: SampleShape.NUGGET },
+    { id: 'ferrox-4', columnIndex: segmentCenter(SEGMENTS, 11), subsurface: false, shape: SampleShape.NUGGET },
     // Buried under the first plateau — laser it open.
-    { id: 'ferrox-5', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: true },
+    { id: 'ferrox-5', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: true, shape: SampleShape.NUGGET },
   ],
   theme: {
     skyColorTop: '#1a1410',

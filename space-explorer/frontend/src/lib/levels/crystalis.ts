@@ -1,5 +1,5 @@
 import type { LevelConfig } from './types';
-import { WorldType } from '../constants';
+import { WorldType, SampleShape } from '../constants';
 import {
   composeHeightmap,
   segmentCenter,
@@ -39,12 +39,12 @@ export const CRYSTALIS: LevelConfig = {
   heightmap: composeHeightmap(SEGMENTS),
   waterZones: [{ startColumn: STARTS[4], endColumn: STARTS[7] - 1, surfaceHeight: 150 }],
   samples: [
-    { id: 'crystalis-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false },
-    { id: 'crystalis-2', columnIndex: segmentCenter(SEGMENTS, 9), subsurface: false },
+    { id: 'crystalis-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false, shape: SampleShape.CRYSTAL },
+    { id: 'crystalis-2', columnIndex: segmentCenter(SEGMENTS, 9), subsurface: false, shape: SampleShape.CRYSTAL },
     // Buried under the second plateau — laser it open.
-    { id: 'crystalis-3', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: true },
+    { id: 'crystalis-3', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: true, shape: SampleShape.CRYSTAL },
     // On the lake floor — dive with the turbines.
-    { id: 'crystalis-4', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false },
+    { id: 'crystalis-4', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false, shape: SampleShape.CRYSTAL },
   ],
   theme: {
     skyColorTop: '#14082a',

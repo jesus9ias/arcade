@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../i18n/config';
-import { GameStatus } from '../lib/constants';
+import { GameStatus, EXPLOSION_DURATION_MS } from '../lib/constants';
 import { lastLevelId } from '../lib/levels';
 import { useGame } from '../lib/state/useRover';
 import { usePrefs } from './usePrefs';
@@ -29,6 +29,26 @@ export default function App() {
   const level = game.level;
   const inMission = status !== GameStatus.LEVEL_SELECT && level !== null;
   const showWarning = prefsWarning || game.warning !== null;
+
+  // The end-of-mission modal. On MISSION_FAILED it is held back until the crash
+  // explosion (GameCanvas) has played, so the boom reads as the loss reason;
+  // ESCAPED / MISSION_ABORTED show it immediately.
+  const isResult =
+    status === GameStatus.MISSION_FAILED ||
+    status === GameStatus.MISSION_ABORTED ||
+    status === GameStatus.ESCAPED;
+  const [showResult, setShowResult] = useState(false);
+  useEffect(() => {
+    if (!isResult) {
+      setShowResult(false);
+      return;
+    }
+    if (status === GameStatus.MISSION_FAILED) {
+      const id = window.setTimeout(() => setShowResult(true), EXPLOSION_DURATION_MS);
+      return () => window.clearTimeout(id);
+    }
+    setShowResult(true);
+  }, [isResult, status]);
 
   // 'c' toggles the controls overlay during a mission.
   useEffect(() => {
@@ -127,9 +147,7 @@ export default function App() {
               />
             )}
 
-            {(status === GameStatus.MISSION_FAILED ||
-              status === GameStatus.MISSION_ABORTED ||
-              status === GameStatus.ESCAPED) && (
+            {isResult && showResult && (
               <MissionResult
                 status={status}
                 result={game.result}

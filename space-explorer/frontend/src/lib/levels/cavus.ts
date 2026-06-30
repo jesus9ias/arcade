@@ -1,5 +1,5 @@
 import type { LevelConfig } from './types';
-import { WorldType } from '../constants';
+import { WorldType, SampleShape } from '../constants';
 import { composeHeightmap, segmentCenter, type TerrainSegment } from './builder';
 
 // Level 7 — Cavus. Cratered barren world, no water. The laser is the puzzle:
@@ -32,11 +32,11 @@ export const CAVUS: LevelConfig = {
   heightmap: composeHeightmap(SEGMENTS),
   waterZones: [],
   samples: [
-    { id: 'cavus-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false },
-    { id: 'cavus-2', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false },
-    { id: 'cavus-3', columnIndex: segmentCenter(SEGMENTS, 8), subsurface: false },
+    { id: 'cavus-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false, shape: SampleShape.ROCK },
+    { id: 'cavus-2', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false, shape: SampleShape.ROCK },
+    { id: 'cavus-3', columnIndex: segmentCenter(SEGMENTS, 8), subsurface: false, shape: SampleShape.ROCK },
     // Buried under the central plateau — carve a pit with the laser.
-    { id: 'cavus-4', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: true },
+    { id: 'cavus-4', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: true, shape: SampleShape.NUGGET },
   ],
   theme: {
     skyColorTop: '#0a0a12',

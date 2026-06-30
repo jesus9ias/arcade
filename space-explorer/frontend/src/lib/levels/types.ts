@@ -1,7 +1,7 @@
 // Level-configuration types. A level is pure data consumed by the engine and
 // the renderer; adding a planet requires only a new LevelConfig object.
 
-import type { WorldType } from '../constants';
+import type { WorldType, SampleShape } from '../constants';
 
 export interface WaterZone {
   startColumn: number;
@@ -13,6 +13,7 @@ export interface SampleConfig {
   id: string;
   columnIndex: number; // center column of the flat zone for this sample
   subsurface: boolean; // Phase 2
+  shape?: SampleShape; // cosmetic marker shape; defaults to DEFAULT_SAMPLE_SHAPE when unset
 }
 
 export interface PlanetTheme {

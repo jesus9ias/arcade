@@ -1,5 +1,5 @@
 import type { LevelConfig } from './types';
-import { WorldType } from '../constants';
+import { WorldType, SampleShape } from '../constants';
 import { composeHeightmap, segmentCenter, type TerrainSegment } from './builder';
 
 // Level 4 — Aridus. Arid dune world, no water, no tools. Three land samples on
@@ -29,9 +29,9 @@ export const ARIDUS: LevelConfig = {
   heightmap: composeHeightmap(SEGMENTS),
   waterZones: [],
   samples: [
-    { id: 'aridus-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false },
-    { id: 'aridus-2', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false },
-    { id: 'aridus-3', columnIndex: segmentCenter(SEGMENTS, 6), subsurface: false },
+    { id: 'aridus-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false, shape: SampleShape.ROCK },
+    { id: 'aridus-2', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false, shape: SampleShape.NUGGET },
+    { id: 'aridus-3', columnIndex: segmentCenter(SEGMENTS, 6), subsurface: false, shape: SampleShape.ROCK },
   ],
   theme: {
     skyColorTop: '#2b1a2e',

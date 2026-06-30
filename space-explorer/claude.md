@@ -63,7 +63,7 @@ space-explorer/
 │       ├── styles/          # global.css (space palette, both themes)
 │       └── lib/
 │           ├── constants/   # game, scene, rover, physics, mission, laser, storage,
-│           │                #   preferences, validation, world, ui — all literals here
+│           │                #   preferences, validation, world, samples, ui — all literals here
 │           ├── physics/     # physics.ts: applyGravity, applyPropulsor,
 │           │                #   applyTurbine, integratePosition (pure)
 │           ├── terrain/     # terrain.ts: getHeight, isFlatZone, isValidLandingZone,

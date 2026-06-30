@@ -1,5 +1,5 @@
 import type { LevelConfig } from './types';
-import { WorldType } from '../constants';
+import { WorldType, SampleShape } from '../constants';
 import {
   composeHeightmap,
   segmentCenter,
@@ -47,13 +47,13 @@ export const TERMINUS: LevelConfig = {
     { startColumn: STARTS[12], endColumn: STARTS[15] - 1, surfaceHeight: 160 },
   ],
   samples: [
-    { id: 'terminus-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false },
-    { id: 'terminus-2', columnIndex: segmentCenter(SEGMENTS, 11), subsurface: false },
-    { id: 'terminus-3', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false },
-    { id: 'terminus-4', columnIndex: segmentCenter(SEGMENTS, 13), subsurface: false },
+    { id: 'terminus-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false, shape: SampleShape.SHARD },
+    { id: 'terminus-2', columnIndex: segmentCenter(SEGMENTS, 11), subsurface: false, shape: SampleShape.SHARD },
+    { id: 'terminus-3', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false, shape: SampleShape.SHARD },
+    { id: 'terminus-4', columnIndex: segmentCenter(SEGMENTS, 13), subsurface: false, shape: SampleShape.SHARD },
     // Two buried samples — laser each plateau open.
-    { id: 'terminus-5', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: true },
-    { id: 'terminus-6', columnIndex: segmentCenter(SEGMENTS, 9), subsurface: true },
+    { id: 'terminus-5', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: true, shape: SampleShape.CRYSTAL },
+    { id: 'terminus-6', columnIndex: segmentCenter(SEGMENTS, 9), subsurface: true, shape: SampleShape.CRYSTAL },
   ],
   theme: {
     skyColorTop: '#0a1a2a',

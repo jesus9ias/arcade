@@ -1,5 +1,5 @@
 import type { LevelConfig } from './types';
-import { WorldType } from '../constants';
+import { WorldType, SampleShape } from '../constants';
 import {
   composeHeightmap,
   segmentCenter,
@@ -40,10 +40,10 @@ export const MARIS: LevelConfig = {
     { startColumn: STARTS[6], endColumn: STARTS[9] - 1, surfaceHeight: 160 },
   ],
   samples: [
-    { id: 'maris-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false },
-    { id: 'maris-2', columnIndex: segmentCenter(SEGMENTS, 2), subsurface: false },
-    { id: 'maris-3', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false },
-    { id: 'maris-4', columnIndex: segmentCenter(SEGMENTS, 7), subsurface: false },
+    { id: 'maris-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false, shape: SampleShape.ROCK },
+    { id: 'maris-2', columnIndex: segmentCenter(SEGMENTS, 2), subsurface: false, shape: SampleShape.ROCK },
+    { id: 'maris-3', columnIndex: segmentCenter(SEGMENTS, 5), subsurface: false, shape: SampleShape.POD },
+    { id: 'maris-4', columnIndex: segmentCenter(SEGMENTS, 7), subsurface: false, shape: SampleShape.ROCK },
   ],
   theme: {
     skyColorTop: '#06283d',

@@ -1,5 +1,5 @@
 import type { LevelConfig } from './types';
-import { WorldType } from '../constants';
+import { WorldType, SampleShape } from '../constants';
 import {
   composeHeightmap,
   segmentCenter,
@@ -46,9 +46,9 @@ export const CALDERA: LevelConfig = {
     },
   ],
   samples: [
-    { id: 'caldera-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false },
-    { id: 'caldera-2', columnIndex: segmentCenter(SEGMENTS, 8), subsurface: false },
-    { id: 'caldera-3', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false },
+    { id: 'caldera-1', columnIndex: segmentCenter(SEGMENTS, 0), subsurface: false, shape: SampleShape.EMBER },
+    { id: 'caldera-2', columnIndex: segmentCenter(SEGMENTS, 8), subsurface: false, shape: SampleShape.EMBER },
+    { id: 'caldera-3', columnIndex: segmentCenter(SEGMENTS, 3), subsurface: false, shape: SampleShape.ROCK },
   ],
   theme: {
     skyColorTop: '#2a0a08',
