@@ -222,6 +222,10 @@ body {
 
 .game-canvas {
   flex: 1 1 640px;
+  /* min-width: 0 overrides the flex default (auto), which would otherwise let
+     the canvas claim its full intrinsic width and force the HUD to wrap onto
+     its own row instead of sitting beside it on desktop. */
+  min-width: 0;
   width: 100%;
   max-width: 100%;
   height: auto;
@@ -233,6 +237,10 @@ body {
 }
 
 .hud {
+  /* order: -1 places the HUD first in the flex flow: to the left of the
+     canvas on desktop (row), and above it on narrow screens (wrapped column)
+     so the bottom-anchored touch controls don't overlap it. */
+  order: -1;
   flex: 0 0 180px;
   display: flex;
   flex-direction: column;
@@ -417,5 +425,12 @@ body {
 
   .hud__stat {
     flex: 1 1 40%;
+  }
+
+  /* On narrow screens the touch controls leave the canvas overlay and flow as
+     a full-width row below it, so the buttons no longer cover the scene. */
+  .touch-controls {
+    position: static;
+    flex: 1 1 100%;
   }
 }

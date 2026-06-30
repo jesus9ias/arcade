@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "space-explorer",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--workspace", "space-explorer/frontend"],
+      "port": 4321,
+      "autoPort": true
+    }
+  ]
+}
