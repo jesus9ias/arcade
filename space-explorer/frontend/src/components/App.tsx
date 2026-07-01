@@ -14,10 +14,13 @@ import ControlsOverlay from './ControlsOverlay';
 import TouchControls from './TouchControls';
 import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
+import IntroSequence from './IntroSequence';
+import { useIntro } from './useIntro';
 
 export default function App() {
   const { t } = useTranslation();
   const { prefs, warning: prefsWarning, setTheme, setLanguage, dismissWarning } = usePrefs();
+  const intro = useIntro();
   const game = useGame();
   const { pause, resume } = game;
   const [showControls, setShowControls] = useState(false);
@@ -105,6 +108,17 @@ export default function App() {
               {status === GameStatus.PLAYING ? '❚❚' : '▶'}
             </button>
           )}
+          {!inMission && (
+            <button
+              type="button"
+              className="icon-button"
+              onClick={intro.replay}
+              aria-label={t('intro.replay')}
+              title={t('intro.replay')}
+            >
+              🎬
+            </button>
+          )}
           <LanguageToggle language={prefs.language} onChange={setLanguage} />
           <ThemeToggle theme={prefs.theme} onChange={setTheme} />
         </div>
@@ -162,6 +176,8 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {intro.active && <IntroSequence onStart={intro.markSeen} onClose={intro.close} />}
     </div>
   );
 }

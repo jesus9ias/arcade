@@ -1,6 +1,19 @@
 {
   "game.title": "Space Explorer",
 
+  "intro.title": "Space Explorer",
+  "intro.start": "Begin Intro",
+  "intro.skip": "Skip",
+  "intro.replay": "Replay intro",
+  "intro.mute": "Mute music",
+  "intro.unmute": "Unmute music",
+  "intro.p1": "In a distant future, technology has transformed human life beyond measure. We have colonized other planets and moons across the solar system, spreading our civilization far beyond Earth.",
+  "intro.p2": "But such prosperity gave way to an age of relentless consumption. Fuel ran dry, even the most basic goods grew scarce, and war broke out over what little remained. An endless crisis.",
+  "intro.p3": "It was then that a noble calling was born: the space explorer.",
+  "intro.p4": "Explorers travel in cutting-edge ships toward distant, untouched worlds. To endure voyages that last years, they slumber in deep-sleep chambers that spare them the journey — at the cost of their own lifespan. Yet the reward they chase is immense.",
+  "intro.p5": "On those worlds they may find minerals once thought only theoretical, capable of generating energy with unmatched efficiency.",
+  "intro.p6": "Now you are one of them. Humanity places its future in your hands, and awaits your return… before it is too late.",
+
   "levelSelect.title": "Select Mission",
   "levelSelect.locked": "Locked",
   "levelSelect.bestTime": "Best: {{time}}",

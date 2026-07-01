@@ -369,6 +369,536 @@ body {
   background: var(--accent);
 }
 
+/* ---- Story intro -------------------------------------------------------- */
+
+.intro {
+  --intro-scene-fade: 900ms;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space);
+  padding: 32px;
+  text-align: center;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 28%, #101736 0%, var(--bg) 70%);
+}
+
+/* Scene manager: cross-faded full-bleed layers painted behind the content. */
+.intro-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.intro-scene__layer {
+  position: absolute;
+  inset: 0;
+}
+
+.intro-scene__layer--in {
+  animation: intro-scene-in var(--intro-scene-fade) ease both;
+}
+
+.intro-scene__layer--out {
+  animation: intro-scene-out var(--intro-scene-fade) ease both;
+}
+
+.intro-scene__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Stars (shared across scenes) */
+.intro-star {
+  fill: #ffffff;
+  animation: intro-twinkle 3.5s ease-in-out infinite;
+}
+
+/* Two parallax layers drift at different rates for a subtle sense of depth.
+   ease-in-out + alternate makes it a gentle float with no loop pop. */
+.intro-stars--far {
+  animation: intro-parallax-far 48s ease-in-out infinite alternate;
+}
+
+.intro-stars--near {
+  animation: intro-parallax-near 48s ease-in-out infinite alternate;
+}
+
+/* Planets with relief (shared) */
+.intro-planet2 {
+  animation: intro-bob 9s ease-in-out infinite;
+}
+
+.intro-planet2__glow {
+  fill: none;
+  stroke: #7fb0ff;
+  stroke-width: 1.4;
+  opacity: 0.35;
+}
+
+.intro-planet2__base--earth {
+  fill: #2f6fb0;
+}
+
+.intro-planet2__base--rock {
+  fill: #8b8577;
+}
+
+.intro-planet2__base--gas {
+  fill: #b98a5a;
+}
+
+.intro-planet2__land {
+  fill: #3f9d6a;
+}
+
+.intro-planet2__crater {
+  fill: rgba(0, 0, 0, 0.22);
+}
+
+.intro-planet2__band {
+  fill: rgba(255, 255, 255, 0.12);
+}
+
+.intro-planet2__band--dark {
+  fill: rgba(0, 0, 0, 0.14);
+}
+
+.intro-planet2__shadow {
+  fill: rgba(4, 6, 20, 0.45);
+}
+
+/* Explorer ship (shared) */
+.intro-ship__body {
+  fill: #cdd5ea;
+}
+
+.intro-ship__pod {
+  fill: #aab3d0;
+}
+
+.intro-ship__fin {
+  fill: #9099bd;
+}
+
+.intro-ship__ring {
+  fill: #2a3350;
+}
+
+.intro-ship__glass {
+  fill: var(--accent);
+}
+
+.intro-ship__glass-hi {
+  fill: #bcd0ff;
+  opacity: 0.85;
+}
+
+.intro-ship__glint {
+  fill: #ffffff;
+}
+
+/* Ship motion — one-directional, slow and constant. The long linear duration
+   means the drift never finishes (and so never appears to stop) within a scene,
+   whatever the per-paragraph duration is set to. */
+.intro-depart-ship {
+  animation: intro-depart 44s linear both;
+}
+
+.intro-approach-ship {
+  animation: intro-approach 46s linear both;
+}
+
+/* City scene: dusk gradient painted in the SVG; night + stars fade in over it */
+.intro-city__night {
+  fill: #070a1c;
+  opacity: 0;
+  animation: intro-nightfall 7s ease-in both;
+}
+
+.intro-city__sun {
+  fill: #ffcf8a;
+  animation: intro-sunset 7s ease-in both;
+}
+
+.intro-city__stars {
+  opacity: 0;
+  animation: intro-city-stars 7s ease-in both;
+}
+
+.intro-city__building {
+  fill: #0e111d;
+}
+
+.intro-city__window {
+  fill: #ffd27a;
+}
+
+.intro-city__window--dim {
+  animation: intro-window-out 6s ease-in both;
+}
+
+/* Content sits above the animated backdrop. */
+.intro__skip,
+.intro__mute,
+.intro__start,
+.intro__stage {
+  position: relative;
+  z-index: 1;
+}
+
+.intro__skip {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.intro__skip:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.intro__mute {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.intro__mute:hover {
+  background: var(--surface-2);
+}
+
+.intro__start {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.intro__title {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: 0.06em;
+  /* Intro sits over dark space art in either theme, so pin a light colour and a
+     dark halo so text stays legible over the ship, bright planets or open sky. */
+  color: #f4f7ff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85), 0 0 18px rgba(0, 0, 0, 0.5);
+}
+
+.intro__begin {
+  font-size: 1.2rem;
+  padding: 14px 28px;
+}
+
+.intro__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  max-width: 660px;
+}
+
+.intro__paragraph {
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.6;
+  /* Light colour + dark halo so the text stays readable over the light ship,
+     bright planets and open space, independent of the theme. */
+  color: #f4f7ff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.92), 0 0 16px rgba(0, 0, 0, 0.6);
+  /* Very soft ease-out glide; the entrance style is set per paragraph below. */
+  animation-duration: 1.3s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+}
+
+.intro__paragraph--from-bottom {
+  animation-name: intro-enter-bottom;
+}
+
+.intro__paragraph--from-top {
+  animation-name: intro-enter-top;
+}
+
+.intro__paragraph--from-left {
+  animation-name: intro-enter-left;
+}
+
+.intro__paragraph--from-right {
+  animation-name: intro-enter-right;
+}
+
+.intro__paragraph--from-center {
+  animation-name: intro-enter-center;
+}
+
+/* Two-stage exit: the last paragraph fades first, then the whole overlay
+   dissolves (0.4s later) to reveal the level select underneath. */
+.intro--exiting .intro__paragraph {
+  animation: intro-fade-out 0.45s ease forwards;
+}
+
+.intro--exiting {
+  animation: intro-dissolve 0.7s ease 0.4s forwards;
+}
+
+@keyframes intro-enter-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes intro-enter-top {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes intro-enter-left {
+  from {
+    opacity: 0;
+    transform: translateX(-22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes intro-enter-right {
+  from {
+    opacity: 0;
+    transform: translateX(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes intro-enter-center {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes intro-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes intro-dissolve {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes intro-twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes intro-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+
+@keyframes intro-scene-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes intro-scene-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Departure: ship drifts steadily up-right, away from Earth and off-screen. */
+@keyframes intro-depart {
+  from {
+    transform: translate(26px, 82px) scale(0.42) rotate(30deg);
+  }
+  to {
+    transform: translate(96px, -32px) scale(0.42) rotate(30deg);
+  }
+}
+
+/* Approach: ship keeps drifting toward the world, growing as it nears. */
+@keyframes intro-approach {
+  from {
+    transform: translate(24px, 64px) scale(0.38) rotate(64deg);
+  }
+  to {
+    transform: translate(82px, 34px) scale(0.92) rotate(64deg);
+  }
+}
+
+@keyframes intro-nightfall {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes intro-sunset {
+  0% {
+    opacity: 0.9;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes intro-city-stars {
+  0%,
+  40% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Windows flicker a couple of times before finally going dark. */
+@keyframes intro-window-out {
+  0%,
+  50% {
+    opacity: 0.9;
+  }
+  55% {
+    opacity: 0.15;
+  }
+  59% {
+    opacity: 0.9;
+  }
+  66% {
+    opacity: 0.1;
+  }
+  71% {
+    opacity: 0.85;
+  }
+  78% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes intro-parallax-far {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(4px, -1.5px);
+  }
+}
+
+@keyframes intro-parallax-near {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(10px, -4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro__paragraph,
+  .intro-star,
+  .intro-stars--far,
+  .intro-stars--near,
+  .intro-planet2,
+  .intro-city__night,
+  .intro-city__sun,
+  .intro-city__stars,
+  .intro-city__window--dim {
+    animation: none;
+  }
+
+  /* The ship's placement lives in its keyframes, so a plain `animation: none`
+     would drop it to the origin — pin a representative static frame instead. */
+  .intro-depart-ship {
+    animation: none;
+    transform: translate(46px, 52px) scale(0.42) rotate(30deg);
+  }
+
+  .intro-approach-ship {
+    animation: none;
+    transform: translate(50px, 50px) scale(0.55) rotate(64deg);
+  }
+}
+
 /* ---- Touch controls ----------------------------------------------------- */
 
 .touch-controls {

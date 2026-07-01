@@ -5,6 +5,7 @@ export * from './physics';
 export * from './mission';
 export * from './laser';
 export * from './storage';
+export * from './intro';
 export * from './preferences';
 export * from './validation';
 export * from './world';

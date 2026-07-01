@@ -45,6 +45,7 @@ A refresh restarts from the level select; in-progress missions are not saved. Pr
 
 - `frontend/.env` — set `PUBLIC_SITE_URL` (copy from `frontend/.env.example`). No domains are hardcoded in source.
 - `infra/.env` — AWS values for deployment (copy from `infra/.env.example`).
+- **Intro music (optional asset):** drop the background track at `frontend/public/audio/intro.mp3` (path set by `INTRO_AUDIO_SRC`). It plays when the player presses **Begin** on the first-visit story intro, with a mute toggle. The intro works fine without the file — playback just no-ops until it is added. Track source: Pixabay — ["Musical Atmo Sound" by Alien_I_Trust / Dimension X](https://pixabay.com/es/sound-effects/musical-atmo-sound-by-alien-i-trust-dimension-x-240618/) (Pixabay Content License).
 
 ## Deployment
 

@@ -1,6 +1,19 @@
 {
   "game.title": "Explorador Espacial",
 
+  "intro.title": "Explorador Espacial",
+  "intro.start": "Iniciar Intro",
+  "intro.skip": "Omitir",
+  "intro.replay": "Repetir intro",
+  "intro.mute": "Silenciar música",
+  "intro.unmute": "Activar música",
+  "intro.p1": "Hay en el futuro una época en que los avances tecnológicos han mejorado la vida de la humanidad de forma extraordinaria: hemos colonizado otros planetas y lunas del sistema solar, expandiendo nuestra civilización más allá de la Tierra.",
+  "intro.p2": "Pero esa bonanza trajo consigo una era de consumo voraz. Los combustibles se agotaron, escasearon los bienes más básicos y estallaron los conflictos por controlar lo poco que quedaba. Una crisis sin fin.",
+  "intro.p3": "Fue entonces cuando surgió un noble oficio: el del explorador espacial.",
+  "intro.p4": "Los exploradores viajan en naves de última generación hacia planetas lejanos y jamás pisados. Para soportar travesías de años, duermen en cámaras de sueño profundo que les ahorran el viaje… al precio de acortarles la vida. Pero la recompensa que persiguen es inmensa.",
+  "intro.p5": "En esos mundos podrían hallar minerales que hasta hoy solo existían en la teoría, capaces de generar energía con una eficacia sin precedentes.",
+  "intro.p6": "Ahora tú eres uno de ellos. La humanidad confía su futuro a tus manos y espera tu regreso… antes de que sea demasiado tarde.",
+
   "levelSelect.title": "Selecciona misión",
   "levelSelect.locked": "Bloqueado",
   "levelSelect.bestTime": "Mejor: {{time}}",
