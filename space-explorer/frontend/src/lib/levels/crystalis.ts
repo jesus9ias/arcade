@@ -30,6 +30,7 @@ const STARTS = segmentStarts(SEGMENTS);
 export const CRYSTALIS: LevelConfig = {
   id: 9,
   name: 'Crystalis',
+  designation: 'SD-09j',
   worldType: WorldType.CRYSTALLINE,
   distanceFromEarth: '55.1 light years',
   gravity: 1.3,

@@ -20,6 +20,7 @@ const SEGMENTS: TerrainSegment[] = [
 export const ARIDUS: LevelConfig = {
   id: 4,
   name: 'Aridus',
+  designation: 'VX-27c',
   worldType: WorldType.DESERT,
   distanceFromEarth: '21.0 light years',
   gravity: 1.0,

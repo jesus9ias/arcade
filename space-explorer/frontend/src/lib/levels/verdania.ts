@@ -18,6 +18,7 @@ const SEGMENTS: TerrainSegment[] = [
 export const VERDANIA: LevelConfig = {
   id: 1,
   name: 'Verdania',
+  designation: 'XR-12d',
   worldType: WorldType.VERDANT,
   distanceFromEarth: '4.2 light years',
   gravity: 0.5,

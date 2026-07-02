@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PropulsorMode, WORLD_TYPE_ICON, DEFAULT_WORLD_ICON } from '../lib/constants';
 import type { GameState } from '../lib/constants';
 import type { LevelConfig } from '../lib/levels';
-import { formatTime, formatLevelId } from './format';
+import { formatTime } from './format';
 
 interface Props {
   state: GameState;
@@ -21,7 +21,7 @@ export default function HUD({ state, level }: Props) {
           {level.worldType ? WORLD_TYPE_ICON[level.worldType] : DEFAULT_WORLD_ICON}
         </span>
         <span className="hud__planet-info">
-          <span className="hud__planet-id">{formatLevelId(level.id)}</span>
+          <span className="hud__planet-id">{level.designation ?? level.name}</span>
           <span className="hud__planet-name">{level.name}</span>
         </span>
       </header>

@@ -23,6 +23,7 @@ const SEGMENTS: TerrainSegment[] = [
 export const CAVUS: LevelConfig = {
   id: 7,
   name: 'Cavus',
+  designation: 'KY-33e',
   worldType: WorldType.BARREN,
   distanceFromEarth: '41.2 light years',
   gravity: 1.2,

@@ -35,6 +35,7 @@ const STARTS = segmentStarts(SEGMENTS);
 export const TERMINUS: LevelConfig = {
   id: 12,
   name: 'Terminus',
+  designation: 'WQ-19m',
   worldType: WorldType.FROZEN,
   distanceFromEarth: '88.9 light years',
   gravity: 1.6,

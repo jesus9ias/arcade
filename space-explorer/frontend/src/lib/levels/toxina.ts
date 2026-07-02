@@ -29,6 +29,7 @@ const STARTS = segmentStarts(SEGMENTS);
 export const TOXINA: LevelConfig = {
   id: 8,
   name: 'Toxina',
+  designation: 'PL-70g',
   worldType: WorldType.TOXIC,
   distanceFromEarth: '48.6 light years',
   gravity: 1.0,

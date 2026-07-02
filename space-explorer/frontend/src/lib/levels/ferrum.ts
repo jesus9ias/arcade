@@ -30,6 +30,7 @@ const STARTS = segmentStarts(SEGMENTS);
 export const FERRUM: LevelConfig = {
   id: 2,
   name: 'Ferrum',
+  designation: 'HX-88b',
   worldType: WorldType.VOLCANIC,
   distanceFromEarth: '8.7 light years',
   gravity: 0.9,

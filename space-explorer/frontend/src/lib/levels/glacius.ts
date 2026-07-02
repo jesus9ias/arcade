@@ -35,6 +35,7 @@ const STARTS = segmentStarts(SEGMENTS);
 export const GLACIUS: LevelConfig = {
   id: 3,
   name: 'Glacius',
+  designation: 'QN-04f',
   worldType: WorldType.FROZEN,
   distanceFromEarth: '15.3 light years',
   gravity: 1.3,

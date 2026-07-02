@@ -3,7 +3,7 @@ import { LEVELS, lastLevelId } from '../lib/levels';
 import type { LevelConfig } from '../lib/levels';
 import { WORLD_TYPE_ICON, DEFAULT_WORLD_ICON } from '../lib/constants';
 import { isLevelUnlocked, type LevelProgress } from '../lib/progress/progress';
-import { formatTime, formatLevelId } from './format';
+import { formatTime } from './format';
 
 interface Props {
   progress: LevelProgress[];
@@ -41,7 +41,7 @@ export default function LevelSelectScreen({ progress, onSelect }: Props) {
                   <span className="level-card__icon" aria-hidden="true">
                     {level.worldType ? WORLD_TYPE_ICON[level.worldType] : DEFAULT_WORLD_ICON}
                   </span>
-                  <span className="level-card__id">{formatLevelId(level.id)}</span>
+                  <span className="level-card__id">{level.designation ?? level.name}</span>
                   <span className="level-card__title">{level.name}</span>
                 </span>
                 <span className="level-card__meta">

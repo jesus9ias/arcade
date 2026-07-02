@@ -30,6 +30,7 @@ const STARTS = segmentStarts(SEGMENTS);
 export const CALDERA: LevelConfig = {
   id: 5,
   name: 'Caldera',
+  designation: 'ZT-61k',
   worldType: WorldType.VOLCANIC,
   distanceFromEarth: '27.4 light years',
   gravity: 1.1,

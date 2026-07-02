@@ -28,6 +28,7 @@ const STARTS = segmentStarts(SEGMENTS);
 export const MARIS: LevelConfig = {
   id: 6,
   name: 'Maris',
+  designation: 'NR-15h',
   worldType: WorldType.OCEANIC,
   distanceFromEarth: '33.8 light years',
   gravity: 0.8,

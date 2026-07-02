@@ -23,6 +23,7 @@ const SEGMENTS: TerrainSegment[] = [
 export const PROCELLA: LevelConfig = {
   id: 10,
   name: 'Procella',
+  designation: 'TV-42c',
   worldType: WorldType.STORM,
   distanceFromEarth: '63.7 light years',
   gravity: 1.5,

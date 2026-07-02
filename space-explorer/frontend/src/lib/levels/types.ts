@@ -24,8 +24,9 @@ export interface PlanetTheme {
 }
 
 export interface LevelConfig {
-  id: number;
+  id: number; // internal identity / ordering key (persistence, unlock logic); never shown
   name: string;
+  designation?: string; // illustrative exoplanet-style catalog code shown in the UI (e.g. "XR-12d"); all bundled levels set it
   worldType?: WorldType; // drives the level-select icon; all bundled levels set it
   distanceFromEarth: string; // flavour, e.g. "4.2 light years"
   gravity: number; // multiplier vs Earth

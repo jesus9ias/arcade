@@ -32,6 +32,7 @@ const STARTS = segmentStarts(SEGMENTS);
 export const FERROX: LevelConfig = {
   id: 11,
   name: 'Ferrox',
+  designation: 'MB-56b',
   worldType: WorldType.METALLIC,
   distanceFromEarth: '72.3 light years',
   gravity: 1.3,
