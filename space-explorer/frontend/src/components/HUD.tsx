@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { PropulsorMode } from '../lib/constants';
+import { PropulsorMode, WORLD_TYPE_ICON, DEFAULT_WORLD_ICON } from '../lib/constants';
 import type { GameState } from '../lib/constants';
 import type { LevelConfig } from '../lib/levels';
-import { formatTime } from './format';
+import { formatTime, formatLevelId } from './format';
 
 interface Props {
   state: GameState;
@@ -16,6 +16,15 @@ export default function HUD({ state, level }: Props) {
 
   return (
     <aside className="hud" aria-live="polite">
+      <header className="hud__planet">
+        <span className="hud__planet-icon" aria-hidden="true">
+          {level.worldType ? WORLD_TYPE_ICON[level.worldType] : DEFAULT_WORLD_ICON}
+        </span>
+        <span className="hud__planet-info">
+          <span className="hud__planet-id">{formatLevelId(level.id)}</span>
+          <span className="hud__planet-name">{level.name}</span>
+        </span>
+      </header>
       <div className="hud__stat">
         <span className="hud__label">{isTurbine ? t('hud.electricity') : t('hud.fuel')}</span>
         <span className="hud__value">

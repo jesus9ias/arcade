@@ -251,6 +251,38 @@ body {
   background: var(--surface);
 }
 
+.hud__planet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hud__planet-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.hud__planet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hud__planet-id {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.hud__planet-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.1;
+}
+
 .hud__stat {
   display: flex;
   justify-content: space-between;
@@ -951,6 +983,19 @@ body {
     flex: 1 1 100%;
     flex-direction: row;
     flex-wrap: wrap;
+  }
+
+  /* The planet header spans its own full-width row above the wrapped stat grid,
+     so it reads as a title instead of sharing a row with the first stat. With
+     the full width available, icon, id and name sit inline on a single line. */
+  .hud__planet {
+    flex: 1 1 100%;
+  }
+
+  .hud__planet-info {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
   }
 
   .hud__stat {
