@@ -170,8 +170,10 @@ Transitions:
   MISSION_FAILED → LEVEL_SELECT   : Exit chosen
   MISSION_ABORTED→ PLAYING        : Restart chosen (mission resets)
   MISSION_ABORTED→ LEVEL_SELECT   : Exit to Missions chosen (no progress saved)
-  ESCAPED        → LEVEL_SELECT   : Continue (next level unlocked if applicable)
+  ESCAPED        → PLAYING        : Continue (jumps straight into the next level; last level → LEVEL_SELECT)
 ```
+
+> **Continue after completion (controller navigation):** on the Mission Complete screen, **Continue** advances directly into the next level in unlock order rather than returning to the level select. This is controller-side navigation in `useRover.continueToNext` (it calls `selectLevel(next)`), not a new FSM edge — the pure `transition(ESCAPED, 'CONTINUE')` still returns `LEVEL_SELECT` (`T-ST-11`, locked) and is used as the last-level fallback when there is no next level.
 
 > **Story intro (Phase 3):** a first-visit story sequence is shown *before* `LEVEL_SELECT` as a UI overlay, **not** as an FSM state — it lives outside `transition()` (like the controls overlay) and is managed by the `useIntro` controller. It is gated by the `space_intro_seen` localStorage flag and can be replayed from the top nav. See the Decisions Log and Stage 6.
 
@@ -728,6 +730,17 @@ Feature: Escape from the planet
     And level progress is saved
     And best time is updated if better
 
+  Scenario: Continue on the Mission Complete screen advances to the next level
+    Given the game is in ESCAPED after completing level 1
+    When the player chooses Continue
+    Then the next level in unlock order (level 2) starts in PLAYING
+    And the level select screen is not shown
+
+  Scenario: Continue on the last level returns to the level select
+    Given the game is in ESCAPED after completing the last level
+    When the player chooses Continue
+    Then the game transitions to LEVEL_SELECT
+
   Scenario: Exiting the top edge before all samples aborts the mission
     Given at least one sample is not yet collected
     When the rover exits the top edge
@@ -1220,4 +1233,5 @@ Stages are executed in strict order. Claude Code stops after each stage and wait
 | 2026-07-01 | Intro→level-select exit is a two-stage CSS dissolve | Rather than cutting straight to the level list, the intro leaves smoothly: when the story finishes (or is skipped) the component enters an `exiting` state that adds `.intro--exiting`, which first fades the current paragraph (`intro-fade-out`, ~0.45s) and then, after a short delay, dissolves the whole overlay (`intro-dissolve`, ~0.7s) so the already-rendered level select shows through. The controller waits `INTRO_EXIT_DURATION_MS` (must cover both CSS stages) before calling `onClose` to unmount. Verified by sampling opacity over the transition (paragraph → 0 before the overlay begins to dissolve). Presentation-only; no engine/state/test changes |
 | 2026-07-01 | Story-intro backdrop is a decorative, CSS-animated SVG (Phase 3 sub-step 2) | The intro's atmosphere comes from a presentation-only `IntroBackdrop` SVG rendered behind the content: a twinkling starfield whose positions are derived deterministically from the star index (no randomness, stable across renders — `INTRO_STAR_COUNT` tunable), a ringed planet, a periodic comet, and the explorer's ship gliding toward the far worlds. All motion lives in CSS keyframes (not SMIL/JS) so it is trivially disabled under `prefers-reduced-motion`, and the SVG is `aria-hidden`/non-interactive. No engine, controller, state, or test changes — the backdrop only paints, and content is layered above it with `z-index` |
 | 2026-07-01 | Story intro is a UI overlay outside the FSM, gated by `space_intro_seen`; "seen" persists only on Begin | The intro sets up the premise before level select. Making it an FSM state would force changes to the locked `transition` suite (`T-ST-*`), so — like the controls overlay — it lives outside `transition()` and is driven by a `useIntro` controller that owns the `space_intro_seen` localStorage read/write (persistence belongs in the controller layer, per the `useRover` precedent), keeping the pure/validation layers and their locked tests untouched. Per developer decision the flag is written **only** when the player presses **Begin** (engages with the story); pressing **Skip** dismisses for the session without persisting, so a skipped intro replays on the next visit until it is actually started. A top-nav **Replay** button (next to language, shown only outside a mission so the story never overlays a live mission) reopens it on demand. Phase 3 sub-step 1 ships text-only (auto-advance, `INTRO_PARAGRAPH_DURATION_MS` tunable); SVG animation and background music are deferred to sub-steps 2–3 |
+| 2026-07-02 | "Continue" on the Mission Complete screen advances to the next level (was: back to level select) | Completing a mission and pressing **Continue** now drops the player straight into the next planet in unlock order instead of the missions home, for uninterrupted progression. Implemented as controller navigation: new `useRover.continueToNext` finds the current level's successor in `LEVELS` and calls `selectLevel(next)`; on the last level (no successor) it falls back to `exit()` → `LEVEL_SELECT` (where the congratulations message shows). The pure FSM is untouched — `transition(ESCAPED, 'CONTINUE')` still returns `LEVEL_SELECT` (`T-ST-11`, locked) and backs the last-level fallback — so no engine, state, or locked-test changes. Only the `MissionResult` `onContinue` wiring changed (`game.resume` → `game.continueToNext`); the pause-menu Continue still resumes |
 | 2026-06-30 | Crash explosion animation on rover destruction (cosmetic) | When `rover.destroyed` turns true, `GameCanvas` plays a one-shot canvas explosion (expanding shockwave ring, swelling star-burst flames with a bright core, and flying debris) at the rover's last position via its own short `requestAnimationFrame` loop, redrawing the frozen scene each frame and overlaying the burst. To make the boom read as the loss reason, `App` holds back the `MISSION_FAILED` `MissionResult` modal by `EXPLOSION_DURATION_MS` (~850 ms) before showing it; `ESCAPED` / `MISSION_ABORTED` still show immediately. Tunables (`EXPLOSION_*`) live in `constants/ui.ts`. Presentation-only: the explosion fires whenever the rover is destroyed (crash or, less often, stranded-with-no-fuel, which share the `DESTROY` transition) — no engine, pure-module, state, or locked-test changes; the modal delay is local `App` state |

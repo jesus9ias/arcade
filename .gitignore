@@ -19,3 +19,4 @@ cdk.out/
 # Allow config files that legitimately use these extensions
 !*.config.js
 !*.config.d.ts
+space-explorer/frontend/.astro/data-store.json

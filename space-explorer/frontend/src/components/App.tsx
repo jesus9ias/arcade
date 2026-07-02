@@ -167,7 +167,7 @@ export default function App() {
                 result={game.result}
                 isLastLevel={level.id === lastLevelId()}
                 onRestart={game.restart}
-                onContinue={game.resume}
+                onContinue={game.continueToNext}
                 onExit={handleExit}
               />
             )}

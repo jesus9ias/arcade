@@ -68,6 +68,7 @@ export interface UseGame {
   pause: () => void;
   resume: () => void;
   restart: () => void;
+  continueToNext: () => void;
   exit: () => void;
   dismissWarning: () => void;
 }
@@ -431,6 +432,17 @@ export function useGame(): UseGame {
     sync(transition(stateRef.current, 'EXIT'));
   }, [sync]);
 
+  // After completing a mission, jump straight into the next level in unlock
+  // order. On the last level there is no next, so fall back to the level select.
+  const continueToNext = useCallback(() => {
+    const level = levelRef.current;
+    if (!level) return;
+    const index = LEVELS.findIndex((l) => l.id === level.id);
+    const next = index >= 0 ? LEVELS[index + 1] : undefined;
+    if (next) selectLevel(next);
+    else exit();
+  }, [selectLevel, exit]);
+
   const dismissWarning = useCallback(() => setWarning(null), []);
 
   return {
@@ -443,6 +455,7 @@ export function useGame(): UseGame {
     pause,
     resume,
     restart,
+    continueToNext,
     exit,
     dismissWarning,
   };
