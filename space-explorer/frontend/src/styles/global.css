@@ -148,6 +148,8 @@ body {
 }
 
 .level-card {
+  position: relative;
+  height: 100%;
   width: 100%;
   text-align: left;
   display: flex;
@@ -158,18 +160,41 @@ body {
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
-  cursor: pointer;
-  transition: transform 0.08s ease, border-color 0.08s ease;
+  transition: border-color 0.08s ease;
 }
 
-.level-card:hover:not(:disabled) {
-  transform: translateY(-2px);
+.level-card:hover {
   border-color: var(--accent);
 }
 
-.level-card:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.level-card--locked {
+  opacity: 0.6;
+}
+
+.level-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.level-card__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.level-card__actions .icon-button {
+  height: 32px;
+  min-width: 34px;
+  padding: 0 8px;
+  font-size: 0.95rem;
+}
+
+.icon-button--play {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .level-card__name {
@@ -198,13 +223,11 @@ body {
 }
 
 .level-card__best {
-  margin-top: 6px;
   font-size: 0.9rem;
   color: var(--accent);
 }
 
 .level-card__lock {
-  margin-top: 6px;
   font-size: 1.3rem;
   line-height: 1;
   color: var(--text-muted);
@@ -327,6 +350,14 @@ body {
   z-index: 5;
 }
 
+/* Anchored to the viewport (not the scrolled document): used by the planet info
+   modal, which is rendered inside the unpositioned level-select flow. */
+.overlay--fixed {
+  position: fixed;
+  border-radius: 0;
+  z-index: 50;
+}
+
 .panel {
   width: min(360px, 90%);
   padding: 24px;
@@ -365,6 +396,85 @@ body {
   flex-direction: column;
   gap: 10px;
   margin-top: 18px;
+}
+
+/* ---- Planet info modal -------------------------------------------------- */
+
+.panel--info {
+  width: min(520px, 92%);
+  text-align: left;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.planet-info__eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.planet-info__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.planet-info__icon {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.planet-info__heading {
+  display: flex;
+  flex-direction: column;
+}
+
+.planet-info__designation {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.planet-info__name {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.planet-info__stats {
+  margin: 0 0 16px;
+  display: grid;
+  gap: 6px;
+}
+
+.planet-info__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.planet-info__row dt {
+  color: var(--text-muted);
+}
+
+.planet-info__row dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.planet-info__subtitle {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.planet-info__prose p {
+  margin: 0 0 10px;
+  line-height: 1.5;
 }
 
 .controls-list {

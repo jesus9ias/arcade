@@ -26,6 +26,7 @@ export const CAVUS: LevelConfig = {
   designation: 'KY-33e',
   worldType: WorldType.BARREN,
   distanceFromEarth: '41.2 light years',
+  massEarths: 1.1,
   gravity: 1.2,
   fuel: 1500,
   electricity: 0,

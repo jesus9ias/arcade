@@ -26,9 +26,10 @@ export interface PlanetTheme {
 export interface LevelConfig {
   id: number; // internal identity / ordering key (persistence, unlock logic); never shown
   name: string;
-  designation?: string; // illustrative exoplanet-style catalog code shown in the UI (e.g. "XR-12d"); all bundled levels set it
-  worldType?: WorldType; // drives the level-select icon; all bundled levels set it
+  designation: string; // illustrative exoplanet-style catalog code shown in the UI (e.g. "XR-12d")
+  worldType: WorldType; // drives the level-select icon and info modal
   distanceFromEarth: string; // flavour, e.g. "4.2 light years"
+  massEarths: number; // planet mass as a multiple of Earth's (shown in the info modal)
   gravity: number; // multiplier vs Earth
   fuel: number; // initial propulsor fuel
   electricity: number; // initial turbine electricity (0 = no turbines)

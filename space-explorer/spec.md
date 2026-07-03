@@ -250,8 +250,10 @@ type WorldType = 'VERDANT' | 'VOLCANIC' | 'FROZEN'; // extend the catalog per ne
 interface LevelConfig {
   id: number;
   name: string;
-  worldType?: WorldType;      // drives the level-select icon; all bundled levels set it
+  designation: string;        // illustrative exoplanet-style catalog code shown in the UI (e.g. "XR-12d")
+  worldType: WorldType;       // drives the level-select icon and info modal
   distanceFromEarth: string;  // flavour, e.g. "4.2 light years"
+  massEarths: number;         // planet mass as a multiple of Earth's (info modal)
   gravity: number;            // multiplier vs Earth (e.g. 0.5, 1.3)
   fuel: number;               // initial propulsor fuel
   electricity: number;        // initial turbine electricity (0 = no turbines)
@@ -290,7 +292,14 @@ In-progress `GameState` is intentionally **not** persisted.
 
 ## World Types & Level-Select Display
 
-Each level declares a `worldType` that drives the icon shown in the level list. The level list renders, per card: the **world icon**, the level's **designation** (an illustrative exoplanet-style catalog code, e.g. `XR-12d`), then the planet **name**, followed by the best time (or a 🔒 lock icon when the level is still locked). The numeric `id` is internal only (identity, persistence, unlock ordering) and is never displayed.
+Each level declares a `worldType` that drives the icon shown in the level list. The level list renders, per card: the **world icon**, the level's **designation** (an illustrative exoplanet-style catalog code, e.g. `XR-12d`), the planet **name**, its distance and gravity, then the best time (or a 🔒 lock icon when the level is still locked). The numeric `id` is internal only (identity, persistence, unlock ordering) and is never displayed.
+
+**Card actions and the planet info modal.** A mission card is no longer a single click target. Each card carries, in its lower-right corner, up to two icon-only buttons (each with a `title`/`aria-label`):
+
+- **Play** (▶) — starts the mission. Rendered **only when the level is unlocked**.
+- **Info** (ℹ) — always rendered (locked or not). Opens a modal describing the planet, so the player can read a locked world's lore before reaching it.
+
+The **planet info modal** presents, for the selected planet: the world-type **icon**, the **designation** code, the **name**, the **distance** from Earth, the **mass** (as `massEarths`, a multiple of Earth's mass — shown only in the modal, not on the card), the **gravity** factor, and a **unique characteristics** section of three prose paragraphs. The modal follows the app's active language (English or Spanish) like the rest of the UI; both translations live in `en.json` / `es.json`. The three paragraphs per planet, by convention, cover: (1) the world's defining feature, (2) the engineering challenge of preparing the rover for those conditions, and (3) the self-contained reason the mission targets this planet (a detected reserve, an orbital window, an anomalous reading — not necessarily a comparison with another world, and never one that contradicts another planet's data).
 
 The world-type → icon catalog (single source of truth: `frontend/src/lib/constants/ui.ts`):
 
@@ -306,13 +315,15 @@ The world-type → icon catalog (single source of truth: `frontend/src/lib/const
 | `BARREN` | Cratered rocky / moon worlds | 🌑 |
 | `STORM` | Wind-blasted high-gravity worlds | 🌩️ |
 | `METALLIC` | Dense metal-rich worlds | ⚙️ |
-| _(none declared)_ | Fallback for a level without a `worldType` | 🪐 |
+| _(fallback)_ | `DEFAULT_WORLD_ICON` for a defensive/unknown case | 🪐 |
 
 **Adding a new level (and possibly a new world type):**
 
-1. Set the new level's `worldType` to an existing catalog value when it fits.
+1. Set the new level's `worldType` to an existing catalog value when it fits. `worldType` is **required** on `LevelConfig` and is validated for every level (`T-LVL-*`).
 2. If the planet is a new archetype, add a value to `WorldType` (`constants/world.ts`) and a matching entry to `WORLD_TYPE_ICON` (`constants/ui.ts`). The icon map is an exhaustive `Record<WorldType, string>`, so TypeScript will not compile a new world type until its icon is supplied — keep this table in sync with that map.
-3. Set the level's `designation` (illustrative exoplanet-style code, e.g. `XR-12d`) — the string shown on the card. It is cosmetic and decoupled from the numeric `id`; the catalog code and its trailing letter carry no ordering meaning. `designation` is optional on the type only so the Stage-2 test fixtures stay untouched; every bundled level sets it, and a level without one falls back to its `name`.
+3. Set the level's `designation` (illustrative exoplanet-style code, e.g. `XR-12d`) — the string shown on the card and the info modal. It is cosmetic and decoupled from the numeric `id`; the catalog code and its trailing letter carry no ordering meaning. `designation` is **required** and validated (`T-LVL-*`).
+4. Set the level's `massEarths` (a positive number — the planet's mass as a multiple of Earth's). **Required**, shown in the info modal, and validated (`T-LVL-*`).
+5. Add the planet's three info-modal paragraphs to both `en.json` and `es.json` under `planet.info.<slug>.p1`, `.p2`, `.p3`, where `<slug>` is the lowercased planet name (e.g. `crystalis`). Their presence and non-emptiness in both languages is validated (`T-LVL-*`).
 
 ## Level Definitions (Initial 3 Planets)
 
@@ -407,6 +418,8 @@ Difficulty rises across the set (gravity 1.0→1.6, scene width ~1020→1780, sa
 
   "levelSelect.title": "Select Mission",
   "levelSelect.locked": "Locked",
+  "levelSelect.play": "Play",
+  "levelSelect.info": "Planet info",
   "levelSelect.bestTime": "Best: {{time}}",
   "levelSelect.noTime": "—",
   "levelSelect.congratulations": "Congratulations! You are a true space explorer. Return victorious to Earth!",
@@ -446,6 +459,18 @@ Difficulty rises across the set (gravity 1.0→1.6, scene width ~1020→1780, sa
 
   "planet.gravity": "{{value}}× gravity",
   "planet.distance": "{{value}} from Earth",
+
+  // Planet info modal
+  "planet.info.title": "Planet Dossier",
+  "planet.info.distance": "Distance",
+  "planet.info.mass": "Mass",
+  "planet.info.massValue": "{{value}}× Earth masses",
+  "planet.info.gravity": "Gravity",
+  "planet.info.gravityValue": "{{value}}×",
+  "planet.info.characteristics": "Unique characteristics",
+  "planet.info.close": "Close",
+  // planet.info.<slug>.p1 … .p3 — three lore paragraphs per planet, in both
+  // languages (slug = lowercased planet name: verdania, ferrum, … terminus)
 
   "nav.language": "Language",
   "nav.theme": "Theme",
@@ -542,8 +567,29 @@ Feature: Level selection screen
 
   Scenario: Completed level can be replayed
     Given level 1 is completed
-    When the player selects level 1
+    When the player presses the Play button on level 1's card
     Then the mission starts for level 1
+
+  Scenario: Play button is hidden on locked levels
+    Given level 2 is locked
+    When the level select screen loads
+    Then level 2's card shows no Play button
+    And level 2's card still shows an Info button
+
+  Scenario: Info button opens the planet dossier
+    Given the level select screen is shown
+    When the player presses the Info button on a card
+    Then a modal shows that planet's type icon, designation, name, distance, mass, gravity, and characteristics
+
+  Scenario: A locked planet's info can still be read
+    Given level 3 is locked
+    When the player presses the Info button on level 3's card
+    Then the planet dossier for level 3 opens
+
+  Scenario: Closing the planet dossier returns to the level select
+    Given the planet dossier is open
+    When the player presses Close or Escape
+    Then the modal closes and the level select is shown
 ```
 
 ### Feature: Rover physics
@@ -1078,6 +1124,16 @@ Feature: Input validation and security
 | `T-LS-05` | Invalid record discarded | array with one record missing `levelId` | Invalid discarded; valid preserved |
 | `T-LS-06` | Non-array `space_progress` resets | `"not array"` | Error result; empty progress applied |
 
+### Levels (data contract)
+
+| Test ID | Objective | Input | Expected output |
+|---|---|---|---|
+| `T-LVL-01` | Every level has a non-empty `designation` | `LEVELS` | Each `designation` is a non-empty string |
+| `T-LVL-02` | Every level has a valid `worldType` | `LEVELS` | Each `worldType` is a key of `WORLD_TYPE_ICON` |
+| `T-LVL-03` | Every level has a positive finite `massEarths` | `LEVELS` | Each `massEarths` is a finite number `> 0` |
+| `T-LVL-04` | Every level has three non-empty lore paragraphs in English | `LEVELS`, `en.json` | `planet.info.<slug>.p1..p3` present and non-empty |
+| `T-LVL-05` | Every level has three non-empty lore paragraphs in Spanish | `LEVELS`, `es.json` | `planet.info.<slug>.p1..p3` present and non-empty |
+
 ### i18n
 
 | Test ID | Objective | Input | Expected output |
@@ -1122,6 +1178,7 @@ Stages are executed in strict order. Claude Code stops after each stage and wait
 - `frontend/src/lib/validation/__tests__/localStorage.test.ts` — T-LS-*
 - `frontend/src/i18n/__tests__/i18n.test.ts` — T-I18N-*
 - `frontend/src/lib/laser/__tests__/laser.test.ts` — T-LAS-* (added in Stage 5 sub-step 2)
+- `frontend/src/lib/levels/__tests__/levels.test.ts` — T-LVL-* (added in Stage 6, planet info modal)
 
 **Constraints:** No implementation files created. Running `vitest` must report all tests as failing.
 
@@ -1235,4 +1292,5 @@ Stages are executed in strict order. Claude Code stops after each stage and wait
 | 2026-07-01 | Story intro is a UI overlay outside the FSM, gated by `space_intro_seen`; "seen" persists only on Begin | The intro sets up the premise before level select. Making it an FSM state would force changes to the locked `transition` suite (`T-ST-*`), so — like the controls overlay — it lives outside `transition()` and is driven by a `useIntro` controller that owns the `space_intro_seen` localStorage read/write (persistence belongs in the controller layer, per the `useRover` precedent), keeping the pure/validation layers and their locked tests untouched. Per developer decision the flag is written **only** when the player presses **Begin** (engages with the story); pressing **Skip** dismisses for the session without persisting, so a skipped intro replays on the next visit until it is actually started. A top-nav **Replay** button (next to language, shown only outside a mission so the story never overlays a live mission) reopens it on demand. Phase 3 sub-step 1 ships text-only (auto-advance, `INTRO_PARAGRAPH_DURATION_MS` tunable); SVG animation and background music are deferred to sub-steps 2–3 |
 | 2026-07-02 | "Continue" on the Mission Complete screen advances to the next level (was: back to level select) | Completing a mission and pressing **Continue** now drops the player straight into the next planet in unlock order instead of the missions home, for uninterrupted progression. Implemented as controller navigation: new `useRover.continueToNext` finds the current level's successor in `LEVELS` and calls `selectLevel(next)`; on the last level (no successor) it falls back to `exit()` → `LEVEL_SELECT` (where the congratulations message shows). The pure FSM is untouched — `transition(ESCAPED, 'CONTINUE')` still returns `LEVEL_SELECT` (`T-ST-11`, locked) and backs the last-level fallback — so no engine, state, or locked-test changes. Only the `MissionResult` `onContinue` wiring changed (`game.resume` → `game.continueToNext`); the pause-menu Continue still resumes |
 | 2026-06-30 | Crash explosion animation on rover destruction (cosmetic) | When `rover.destroyed` turns true, `GameCanvas` plays a one-shot canvas explosion (expanding shockwave ring, swelling star-burst flames with a bright core, and flying debris) at the rover's last position via its own short `requestAnimationFrame` loop, redrawing the frozen scene each frame and overlaying the burst. To make the boom read as the loss reason, `App` holds back the `MISSION_FAILED` `MissionResult` modal by `EXPLOSION_DURATION_MS` (~850 ms) before showing it; `ESCAPED` / `MISSION_ABORTED` still show immediately. Tunables (`EXPLOSION_*`) live in `constants/ui.ts`. Presentation-only: the explosion fires whenever the rover is destroyed (crash or, less often, stranded-with-no-fuel, which share the `DESTROY` transition) — no engine, pure-module, state, or locked-test changes; the modal delay is local `App` state |
+| 2026-07-02 | Mission cards get Play/Info buttons and a planet info modal; `designation`, `worldType`, `massEarths` become required and validated | Each mission card is no longer one big click target: its lower-right corner now holds an icon-only **Play** (▶, only when unlocked) and **Info** (ℹ, always) button, each with a `title`/`aria-label`. Info opens a new `PlanetInfoModal` (reusing the `overlay`/`panel` pattern, closable by button or `Escape`) showing the world icon, designation, name, distance, **mass** (new `massEarths`, modal-only), gravity, and three prose "unique characteristics" paragraphs — feature → rover engineering challenge → why this planet was targeted (a self-contained reason, no cross-planet contradiction). Lore lives in i18n (`planet.info.<slug>.pN`, slug = lowercased name) so it is bilingual and follows the active language. Following TDD, `massEarths` is added as a **required** field and `designation`/`worldType` are **promoted from optional to required** (they were only optional to spare the Stage-2 fixtures); the two locked fixtures (`transitions`, `progress` `makeLevel`) were updated with developer authorization, and a new non-locked `levels.test.ts` (`T-LVL-01..05`) validates the data contract (designation, worldType, positive massEarths, and three non-empty lore paragraphs per planet in both languages). Presentation + data + i18n only; no engine/controller/pure-module changes |
 | 2026-07-02 | Planets show an illustrative `designation` code; the numeric `id` becomes internal-only | The HUD and level cards previously displayed the numeric `id` zero-padded as `#NNN`. Cards/HUD now show a new per-level `designation` string — an exoplanet-style catalog code (e.g. `XR-12d`) — purely cosmetic and decoupled from the `id`: fictional catalog prefixes, and the trailing letter carries no ordering meaning. The numeric `id` stays exactly as-is for identity, `localStorage` persistence (`levelId`), and the sequential unlock logic (`id - 1`) — none of that changed, so no progress migration and no locked-test/engine changes. `designation` is optional on `LevelConfig` only so the Stage-2 fixtures (which omit it) still typecheck, mirroring `worldType?`; every bundled level sets it and the UI falls back to `name` if absent. The now-orphaned `formatLevelId` helper was removed |

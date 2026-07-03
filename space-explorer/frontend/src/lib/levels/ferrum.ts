@@ -33,6 +33,7 @@ export const FERRUM: LevelConfig = {
   designation: 'HX-88b',
   worldType: WorldType.VOLCANIC,
   distanceFromEarth: '8.7 light years',
+  massEarths: 0.85,
   gravity: 0.9,
   fuel: 900,
   electricity: 0,

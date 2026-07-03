@@ -23,6 +23,7 @@ export const ARIDUS: LevelConfig = {
   designation: 'VX-27c',
   worldType: WorldType.DESERT,
   distanceFromEarth: '21.0 light years',
+  massEarths: 0.95,
   gravity: 1.0,
   fuel: 1100,
   electricity: 0,

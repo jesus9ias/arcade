@@ -16,6 +16,8 @@
 
   "levelSelect.title": "Selecciona misión",
   "levelSelect.locked": "Bloqueado",
+  "levelSelect.play": "Jugar",
+  "levelSelect.info": "Información del planeta",
   "levelSelect.bestTime": "Mejor: {{time}}",
   "levelSelect.noTime": "—",
   "levelSelect.congratulations": "¡Felicidades! Eres un verdadero explorador espacial. ¡Regresa victorioso a la Tierra!",
@@ -59,6 +61,63 @@
 
   "planet.gravity": "{{value}}× gravedad",
   "planet.distance": "{{value}} desde la Tierra",
+
+  "planet.info.title": "Expediente del planeta",
+  "planet.info.distance": "Distancia",
+  "planet.info.mass": "Masa",
+  "planet.info.massValue": "{{value}}× la masa de la Tierra",
+  "planet.info.gravity": "Gravedad",
+  "planet.info.gravityValue": "{{value}}×",
+  "planet.info.characteristics": "Características únicas",
+  "planet.info.close": "Cerrar",
+
+  "planet.info.verdania.p1": "Verdania es un mundo joven y de baja gravedad ahogado en selva. Las copas bioluminiscentes brillan en un crepúsculo verde perpetuo, y el mineral que buscamos crece cristalizado en la savia que se acumula entre sus raíces titánicas.",
+  "planet.info.verdania.p2": "Su gravedad endeble es la trampa. Los propulsores del rover, calibrados para la Tierra, lo lanzarían al cielo al menor toque, así que el programa de descenso se atenúa a ráfagas suavísimas — y su casco se sella contra esporas corrosivas que devoran los cierres comunes.",
+  "planet.info.verdania.p3": "Se eligió Verdania como primer punto de escala por la razón más simple: a solo 4.2 años luz es el mundo más cercano con una firma mineral confirmada, un campo de pruebas ideal antes de las largas travesías más allá.",
+
+  "planet.info.ferrum.p1": "Ferrum es un mundo abrasado y rojo de hierro donde ríos de metal fundido serpentean entre campos de basalto que se enfría bajo un cielo ahogado en ceniza.",
+  "planet.info.ferrum.p2": "Aterrizar exige leer el calor: solo las llanuras oscurecidas y endurecidas son lo bastante sólidas para sostener el rover, y sus bajos se blindan contra el resplandor que asciende de la roca aún caliente.",
+  "planet.info.ferrum.p3": "El mineral se concentra al enfriarse la lava rica en hierro de Ferrum, dejando vetas ricas engarzadas en los flujos costrosos — una cosecha posible solo en los breves lapsos en que los flujos se apagan.",
+
+  "planet.info.glacius.p1": "Glacius es un mundo silencioso de mares congelados, su superficie una coraza de hielo azul-blanco que sella lagos oscuros de agua de deshielo muy por debajo.",
+  "planet.info.glacius.p2": "Es el primer mundo que exige el equipo completo: el láser perfora metros de hielo para alcanzar lo enterrado, mientras las turbinas permiten al rover bucear los lagos gélidos — cada sistema al rojo contra el frío.",
+  "planet.info.glacius.p3": "Los sondeos profundos situaron bajo el hielo de Glacius uno de los depósitos minerales más ricos jamás registrados, sellado y preservado por la congelación — razón suficiente para enviar un rover capaz de cortar y de bucear.",
+
+  "planet.info.aridus.p1": "Aridus es un océano de dunas sin una gota de agua, sus arenas ocres avanzando en crestas de horizonte a horizonte bajo un sol pálido velado de polvo.",
+  "planet.info.aridus.p2": "El peligro es la propia arena: engulle los sitios de aterrizaje enteros y atasca cada toma, así que los propulsores se sellan contra la abrasión y el rover debe apuntar a las raras plataformas de roca desnuda que dejan las tormentas.",
+  "planet.info.aridus.p3": "El viento incesante es el don de Aridus — desgasta las dunas hasta el lecho rocoso y deja al descubierto vetas de mineral que en mundos más calmos yacerían enterradas, libres para cualquier rover capaz de aterrizar.",
+
+  "planet.info.caldera.p1": "Caldera es una herida hecha mundo — un único supervolcán tan vasto que su cráter abarca un continente, rodeado de géiseres que exhalan azufre hacia un cielo naranja amoratado.",
+  "planet.info.caldera.p2": "Sobrevivir es cuestión de sincronía: el suelo late con erupciones, y el rover debe posarse en el borde endurecido entre ellas, con su coraza afianzada contra la lluvia de ceniza y los súbitos golpes de calor.",
+  "planet.info.caldera.p3": "Las profundidades revueltas de Caldera obran como una bomba-horno, empujando mineral desde el manto para costrarse en la superficie — un depósito renovado con cada erupción, si un rover se atreve a recogerlo entre estallidos.",
+
+  "planet.info.maris.p1": "Maris es un mundo anegado en mares someros, un puñado de archipiélagos bajos que rompen una extensión infinita de agua turquesa bajo una gravedad suave y benigna.",
+  "planet.info.maris.p2": "Aquí no hay hielo que cortar, solo agua que cruzar — el rover cabalga sus turbinas para bucear entre las islas y rasar el lecho marino, mantenido a flote y sellado contra la presión de las profundidades.",
+  "planet.info.maris.p3": "En Maris el mineral precipita lentamente del propio agua, posándose en bancos relucientes por el lecho marino — un depósito que ninguna perforadora alcanzaría, a la espera solo de un rover capaz de bucear.",
+
+  "planet.info.cavus.p1": "Cavus es un cascarón gris y craterizado de mundo, sin aire e inmóvil, sus llanuras picadas por las cicatrices de mil millones de años de impactos.",
+  "planet.info.cavus.p2": "Lo que importa aquí yace enterrado bajo un espeso regolito, así que el rover se apoya en su láser para cortar los fondos de cráter y exponer las vetas de abajo — sin agua, sin clima, solo excavación paciente bajo un tirón pesado.",
+  "planet.info.cavus.p3": "Esos mismos impactos antiguos son la razón de nuestra visita: golpearon lo bastante hondo para enterrar bolsas de mineral en los fondos de cráter, resguardadas del vacío, señaladas ahora por los sondeos para que el rover las desentierre.",
+
+  "planet.info.toxina.p1": "Toxina se oculta bajo bancos errantes de nube ácida que caen como lluvia cáustica, encharcándose en lagos que humean y sisean por sus llanuras manchadas y corroídas.",
+  "planet.info.toxina.p2": "Aquí todo se corroe, así que el rover viste un casco a prueba de ácido, y sus turbinas lo llevan a cruzar los lagos cáusticos donde se asientan los depósitos más ricos — cada veta y junta sellada contra un mundo que intenta disolverlo.",
+  "planet.info.toxina.p3": "Es el propio ácido lo que concentra el botín: lixivia el mineral del lecho rocoso y lo reúne en los fondos de los lagos, una refinería natural que vale la pena afrontar para un rover construido para resistirla.",
+
+  "planet.info.crystalis.p1": "Los sondeos espectrales señalan a Crystalis como un mundo ahogado en presión. En lo profundo de su atmósfera violeta esa presión comprime el carbono hasta convertirlo en una lluvia incesante de diamantes que se posa sobre crestas de cristal puro, mientras lagos someros de mineral licuado se acumulan en los valles entre los picos.",
+  "planet.info.crystalis.p2": "Preparar el rover significa blindarlo contra el desgaste: su cápsula de descenso se endurece para resistir un granizo de esquirlas de gema que picaría cualquier aleación común, el láser de muestreo se recalibra para hendir las redes cristalinas con limpieza en lugar de astillar la muestra, y las tomas de las turbinas se sellan contra el lodo abrasivo de los lagos.",
+  "planet.info.crystalis.p3": "Se eligió Crystalis por una razón decisiva: la espectrometría de largo alcance rastreó una de las reservas más ricas del mineral energético jamás registradas, engarzada en sus crestas de cristal. Una rara alineación de su estrella con dos gigantes exteriores abrió un estrecho corredor de asistencia gravitatoria en el momento justo, recortando años de travesía y ahorrando un combustible que no podíamos permitirnos quemar.",
+
+  "planet.info.procella.p1": "Procella nunca descansa. Una única tempestad planetaria la envuelve en vientos huracanados y relámpagos sin fin, su cielo pesado desgarrado por murallas de nubes en carrera.",
+  "planet.info.procella.p2": "Aquí el propio vuelo es la prueba: la gravedad aplastante arrastra al rover hacia abajo mientras las ráfagas lo lanzan de costado, así que carga combustible extra y debe lanzarse a las calmas sombras de viento tras las crestas para siquiera posarse.",
+  "planet.info.procella.p3": "La tormenta interminable es lo que nos atrae — sus relámpagos cargan el polvo y barren el mineral en bancos densos, ligados por electricidad estática, al abrigo de las tierras altas, concentrados como ningún mundo en calma lograría.",
+
+  "planet.info.ferrox.p1": "Ferrox es un mundo denso y oscuro de metal donde el suelo resuena bajo los pies y charcos de metal líquido yacen quietos como espejos entre crestas de mena bruta, su campo magnético torciendo cada instrumento.",
+  "planet.info.ferrox.p2": "Su magnetismo sume la navegación en el caos, así que el rover vuela a estima; el láser corta la mena endurecida para alcanzar lo encerrado dentro, y las turbinas lo impulsan por los charcos de azogue donde se hunden las muestras más pesadas.",
+  "planet.info.ferrox.p3": "Ferrox alberga la concentración más densa del mineral jamás medida, fundida en su corteza metálica — un botín lo bastante rico para justificar la larga travesía y el equipo necesario para arrancarlo.",
+
+  "planet.info.terminus.p1": "Terminus es el borde del mapa — el mundo más lejano al alcance, una extensión congelada donde las observaciones sugieren que hasta el metano yace encerrado como hielo bajo un cielo negro sembrado de estrellas.",
+  "planet.info.terminus.p2": "Lo exige todo a la vez: la gravedad más dura hasta ahora, un frío criogénico, vetas enterradas para el láser y lagos hundidos para las turbinas. Nada del rover se libra aquí, al final del camino.",
+  "planet.info.terminus.p3": "Vinimos a Terminus porque guarda la última y mayor reserva que nuestras sondas hallaron jamás — la razón de que toda la expedición llegue tan lejos. Más allá no hay nada cartografiado, ni combustible para ir a buscarlo.",
 
   "nav.language": "Idioma",
   "nav.theme": "Tema",

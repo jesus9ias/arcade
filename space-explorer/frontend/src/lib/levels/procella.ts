@@ -26,6 +26,7 @@ export const PROCELLA: LevelConfig = {
   designation: 'TV-42c',
   worldType: WorldType.STORM,
   distanceFromEarth: '63.7 light years',
+  massEarths: 2.1,
   gravity: 1.5,
   fuel: 1500,
   electricity: 0,

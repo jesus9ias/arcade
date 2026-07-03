@@ -21,6 +21,7 @@ export const VERDANIA: LevelConfig = {
   designation: 'XR-12d',
   worldType: WorldType.VERDANT,
   distanceFromEarth: '4.2 light years',
+  massEarths: 0.4,
   gravity: 0.5,
   fuel: 1200,
   electricity: 0,

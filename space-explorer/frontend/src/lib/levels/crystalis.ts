@@ -33,6 +33,7 @@ export const CRYSTALIS: LevelConfig = {
   designation: 'SD-09j',
   worldType: WorldType.CRYSTALLINE,
   distanceFromEarth: '55.1 light years',
+  massEarths: 1.8,
   gravity: 1.3,
   fuel: 1600,
   electricity: 450,

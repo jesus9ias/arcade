@@ -33,6 +33,7 @@ export const CALDERA: LevelConfig = {
   designation: 'ZT-61k',
   worldType: WorldType.VOLCANIC,
   distanceFromEarth: '27.4 light years',
+  massEarths: 1.2,
   gravity: 1.1,
   fuel: 1000,
   electricity: 0,

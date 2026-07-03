@@ -38,6 +38,7 @@ export const TERMINUS: LevelConfig = {
   designation: 'WQ-19m',
   worldType: WorldType.FROZEN,
   distanceFromEarth: '88.9 light years',
+  massEarths: 2.6,
   gravity: 1.6,
   fuel: 2000,
   electricity: 700,

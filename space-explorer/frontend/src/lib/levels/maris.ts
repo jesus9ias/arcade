@@ -31,6 +31,7 @@ export const MARIS: LevelConfig = {
   designation: 'NR-15h',
   worldType: WorldType.OCEANIC,
   distanceFromEarth: '33.8 light years',
+  massEarths: 0.7,
   gravity: 0.8,
   fuel: 1300,
   electricity: 600,

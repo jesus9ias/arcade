@@ -38,6 +38,7 @@ export const GLACIUS: LevelConfig = {
   designation: 'QN-04f',
   worldType: WorldType.FROZEN,
   distanceFromEarth: '15.3 light years',
+  massEarths: 1.5,
   gravity: 1.3,
   fuel: 1600,
   electricity: 400,

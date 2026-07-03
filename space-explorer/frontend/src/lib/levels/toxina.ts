@@ -32,6 +32,7 @@ export const TOXINA: LevelConfig = {
   designation: 'PL-70g',
   worldType: WorldType.TOXIC,
   distanceFromEarth: '48.6 light years',
+  massEarths: 1.05,
   gravity: 1.0,
   fuel: 1200,
   electricity: 500,

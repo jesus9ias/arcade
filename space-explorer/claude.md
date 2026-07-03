@@ -58,7 +58,7 @@ space-explorer/
 ├── frontend/
 │   └── src/
 │       ├── components/      # React UI only: App, GameCanvas, HUD, LevelSelectScreen,
-│       │                    #   PauseMenu, MissionResult, ControlsOverlay,
+│       │                    #   PlanetInfoModal, PauseMenu, MissionResult, ControlsOverlay,
 │       │                    #   IntroSequence, IntroScene, IntroScenes, IntroShip,
 │       │                    #   ThemeToggle, LanguageToggle, TouchControls,
 │       │                    #   usePrefs (prefs hook), useIntro (intro hook), format (time helper)
@@ -98,7 +98,7 @@ Architecture is **layer-based extended with domain folders** (the spec's declare
 5. **Add any new UI strings** to both `i18n/en.json` and `i18n/es.json`.
 6. **Validate:** `npm run test --workspace space-explorer/frontend`, then `npm run typecheck --workspace space-explorer/frontend`, then `npm run build --workspace space-explorer/frontend`.
 
-To add a planet (Phase 2), add one `LevelConfig` object under `lib/levels/` and register it in `lib/levels/index.ts` — no engine changes. Use `builder.ts` (`composeHeightmap`, `segmentCenter`) so sample columns stay pinned to flat-zone centers. Set the level's `worldType` (drives the level-select icon): reuse an existing value from `constants/world.ts`, or add a new `WorldType` plus its entry in `WORLD_TYPE_ICON` (`constants/ui.ts`) — that map is an exhaustive `Record<WorldType, string>`, so a new world type will not compile without an icon. Set the level's `designation` (an illustrative exoplanet-style catalog code, e.g. `XR-12d`) — that string is what the card and HUD display; the numeric `id` is internal only (identity, persistence, unlock ordering) and never shown. Locked levels show a 🔒 icon. See `spec.md` → "World Types & Level-Select Display" for the catalog.
+To add a planet (Phase 2), add one `LevelConfig` object under `lib/levels/` and register it in `lib/levels/index.ts` — no engine changes. Use `builder.ts` (`composeHeightmap`, `segmentCenter`) so sample columns stay pinned to flat-zone centers. `designation`, `worldType` and `massEarths` are **required** and validated for every level (`T-LVL-*` in `lib/levels/__tests__/levels.test.ts`): set the level's `worldType` (drives the level-select icon and info-modal icon) — reuse an existing value from `constants/world.ts`, or add a new `WorldType` plus its entry in `WORLD_TYPE_ICON` (`constants/ui.ts`), an exhaustive `Record<WorldType, string>` so a new type will not compile without an icon; set its `designation` (illustrative exoplanet-style catalog code, e.g. `XR-12d`) shown on the card/HUD/modal; and set its `massEarths` (positive number, shown only in the info modal). The numeric `id` is internal only (identity, persistence, unlock ordering) and never shown. Also add the planet's three info-modal paragraphs to both `en.json` and `es.json` under `planet.info.<slug>.p1..p3` (slug = lowercased name); presence + non-emptiness in both languages is validated by `T-LVL-04/05`. Locked levels show a 🔒 icon and only the info (ℹ) card button; unlocked levels also show the play (▶) button. See `spec.md` → "World Types & Level-Select Display" for the catalog and card/modal contract.
 
 If a change contradicts an existing scenario or decision, stop, update the documentation first, then change the code.
 

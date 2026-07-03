@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createInitialProgress, applyCompletion, isLevelUnlocked } from '../progress';
+import { WorldType } from '../../constants';
 import type { LevelConfig } from '../../levels';
 
 // Stage 2 failing tests — progress (T-PRG-*). Implementation arrives in Stage 3.
@@ -7,7 +8,10 @@ import type { LevelConfig } from '../../levels';
 const makeLevel = (id: number): LevelConfig => ({
   id,
   name: `Level ${id}`,
+  designation: 'PR-00a',
+  worldType: WorldType.VERDANT,
   distanceFromEarth: '1 light year',
+  massEarths: 1,
   gravity: 1,
   fuel: 1000,
   electricity: 0,

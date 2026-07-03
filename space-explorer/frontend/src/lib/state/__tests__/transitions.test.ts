@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { transition } from '../transitions';
-import { GameStatus, PropulsorMode } from '../../constants';
+import { GameStatus, PropulsorMode, WorldType } from '../../constants';
 import type { GameState } from '../../constants';
 import type { LevelConfig } from '../../levels';
 
@@ -9,7 +9,10 @@ import type { LevelConfig } from '../../levels';
 const makeLevel = (id = 1): LevelConfig => ({
   id,
   name: `Level ${id}`,
+  designation: 'TS-00a',
+  worldType: WorldType.VERDANT,
   distanceFromEarth: '1 light year',
+  massEarths: 1,
   gravity: 1,
   fuel: 1000,
   electricity: 0,

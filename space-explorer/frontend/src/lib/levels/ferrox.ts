@@ -35,6 +35,7 @@ export const FERROX: LevelConfig = {
   designation: 'MB-56b',
   worldType: WorldType.METALLIC,
   distanceFromEarth: '72.3 light years',
+  massEarths: 2.4,
   gravity: 1.3,
   fuel: 1800,
   electricity: 600,
