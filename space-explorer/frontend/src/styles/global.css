@@ -526,7 +526,9 @@ body {
   padding: 32px;
   text-align: center;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 28%, #101736 0%, var(--bg) 70%);
+  /* Always dark, independent of the selected theme — the story is set in space.
+     Pinned to the dark-theme --bg (#0a0c18) so light mode does not wash it out. */
+  background: radial-gradient(circle at 50% 28%, #101736 0%, #0a0c18 70%);
 }
 
 /* Scene manager: cross-faded full-bleed layers painted behind the content. */
