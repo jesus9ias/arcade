@@ -18,7 +18,7 @@ export default function ThemeToggle({ theme, onChange }: Props) {
       title={t('nav.theme')}
       onClick={() => onChange(next)}
     >
-      {theme === Theme.DARK ? '☾' : '☀'}
+      {next === Theme.DARK ? '☾' : '☀'}
     </button>
   );
 }
