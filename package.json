@@ -10,7 +10,9 @@
     "snake/frontend",
     "snake/infra",
     "space-explorer/frontend",
-    "space-explorer/infra"
+    "space-explorer/infra",
+    "tetris/frontend",
+    "tetris/infra"
   ],
   "engines": {
     "node": "24"

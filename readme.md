@@ -14,6 +14,8 @@ The full contract and design decisions live in [`spec.md`](spec.md). Working ins
 |---|---|---|
 | [gato](gato/spec.md) | Tic-tac-toe (vs machine or local 2-player) | Implemented; deployed |
 | [snake](snake/spec.md) | Snake — forest theme, Simple + Versus, endless levels, efficiency scoring | Implemented; deployed |
+| [space-explorer](space-explorer/spec.md) | Physics-based planetary rover — thruster flight, landing, sample collection across 12 planets, best-time tracking | Implemented; deployed |
+| [tetris](tetris/spec.md) | Tetris — modern rules (SRS, T-Spin, hold, ghost, 7-bag), 15 levels, neon dark UI, match history | Implemented; deploy pending |
 
 ## Prerequisites
 
@@ -105,6 +107,7 @@ Configure these repository secrets (per game where noted):
 | `AWS_REGION` | shared (`us-east-1`) |
 | `GATO_BUCKET_NAME`, `GATO_DISTRIBUTION_ID` | gato |
 | `SNAKE_BUCKET_NAME`, `SNAKE_DISTRIBUTION_ID` | snake |
+| `TETRIS_BUCKET_NAME`, `TETRIS_DISTRIBUTION_ID` | tetris |
 
 Set the frontend's `PUBLIC_SITE_URL` (in `<game>/frontend/.env`) to the deployed URL; no domain is hardcoded anywhere in source.
 

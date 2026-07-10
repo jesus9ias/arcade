@@ -7,6 +7,13 @@
       "runtimeArgs": ["run", "dev", "--workspace", "space-explorer/frontend"],
       "port": 4321,
       "autoPort": true
+    },
+    {
+      "name": "tetris",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--workspace", "tetris/frontend"],
+      "port": 4321,
+      "autoPort": true
     }
   ]
 }

@@ -1,0 +1,75 @@
+{
+  "game": { "title": "Tetris" },
+  "hud": {
+    "hold": "Reserva",
+    "toHold": "Reservas",
+    "next": "Siguientes",
+    "level": "Nivel",
+    "score": "Puntos",
+    "lines": "Líneas",
+    "remaining": "Restantes"
+  },
+  "start": {
+    "title": "Tetris",
+    "subtitle": "Apila los bloques clásicos",
+    "play": "Jugar",
+    "startLevel": "Nivel inicial",
+    "scoreboard": "Puntajes",
+    "controls": "Controles"
+  },
+  "state": {
+    "paused": "Pausa",
+    "resume": "Reanudar",
+    "gameOver": "Fin del juego",
+    "finalScore": "Puntaje final",
+    "retry": "Reintentar",
+    "victory": "¡Ganaste!",
+    "victoryBody": "Completaste los 15 niveles.",
+    "menu": "Menú principal"
+  },
+  "controls": {
+    "title": "Controles",
+    "moveLeft": "Mover izquierda",
+    "moveRight": "Mover derecha",
+    "softDrop": "Caída suave",
+    "hardDrop": "Caída dura",
+    "rotateCw": "Girar horario",
+    "rotateCcw": "Girar antihorario",
+    "hold": "Reservar",
+    "pause": "Pausar / Reanudar",
+    "close": "Cerrar"
+  },
+  "scoreboard": {
+    "title": "Puntajes",
+    "date": "Fecha",
+    "lines": "Líneas",
+    "score": "Puntos",
+    "bonus": "Bonus",
+    "regular": "Regular",
+    "startLevel": "Inicio",
+    "endLevel": "Final",
+    "duration": "Tiempo",
+    "result": "Resultado",
+    "best": "Mejor",
+    "empty": "Aún no hay partidas",
+    "clear": "Borrar historial",
+    "clearConfirm": "¿Borrar todas las partidas guardadas? Esto no se puede deshacer.",
+    "confirm": "Borrar",
+    "cancel": "Cancelar",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "back": "Volver"
+  },
+  "outcome": {
+    "gameOver": "Fin del juego",
+    "victory": "Victoria"
+  },
+  "nav": {
+    "language": "Idioma",
+    "mute": "Silenciar",
+    "unmute": "Activar sonido"
+  },
+  "warning": {
+    "storageReset": "Los datos guardados eran inválidos y se restablecieron."
+  }
+}

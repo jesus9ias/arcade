@@ -1,0 +1,75 @@
+{
+  "game": { "title": "Tetris" },
+  "hud": {
+    "hold": "Hold",
+    "toHold": "To hold",
+    "next": "Next",
+    "level": "Level",
+    "score": "Score",
+    "lines": "Lines",
+    "remaining": "Remaining"
+  },
+  "start": {
+    "title": "Tetris",
+    "subtitle": "Classic block stacking",
+    "play": "Play",
+    "startLevel": "Starting level",
+    "scoreboard": "Scoreboard",
+    "controls": "Controls"
+  },
+  "state": {
+    "paused": "Paused",
+    "resume": "Resume",
+    "gameOver": "Game Over",
+    "finalScore": "Final score",
+    "retry": "Retry",
+    "victory": "You win!",
+    "victoryBody": "You cleared all 15 levels.",
+    "menu": "Main menu"
+  },
+  "controls": {
+    "title": "Controls",
+    "moveLeft": "Move left",
+    "moveRight": "Move right",
+    "softDrop": "Soft drop",
+    "hardDrop": "Hard drop",
+    "rotateCw": "Rotate clockwise",
+    "rotateCcw": "Rotate counterclockwise",
+    "hold": "Hold",
+    "pause": "Pause / Resume",
+    "close": "Close"
+  },
+  "scoreboard": {
+    "title": "Scoreboard",
+    "date": "Date",
+    "lines": "Lines",
+    "score": "Score",
+    "bonus": "Bonus",
+    "regular": "Regular",
+    "startLevel": "Start",
+    "endLevel": "End",
+    "duration": "Time",
+    "result": "Result",
+    "best": "Best",
+    "empty": "No games yet",
+    "clear": "Clear history",
+    "clearConfirm": "Delete all saved games? This cannot be undone.",
+    "confirm": "Delete",
+    "cancel": "Cancel",
+    "prev": "Previous",
+    "next": "Next",
+    "back": "Back"
+  },
+  "outcome": {
+    "gameOver": "Game over",
+    "victory": "Victory"
+  },
+  "nav": {
+    "language": "Language",
+    "mute": "Mute",
+    "unmute": "Unmute"
+  },
+  "warning": {
+    "storageReset": "Saved data was invalid and has been reset."
+  }
+}
