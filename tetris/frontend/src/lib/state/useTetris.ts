@@ -73,6 +73,7 @@ export interface TetrisController {
   toggleMute: () => void;
   clearScores: () => void;
   dismissWarning: () => void;
+  playModalOpen: () => void;
   moveLeft: () => void;
   moveRight: () => void;
   rotateCw: () => void;
@@ -375,6 +376,7 @@ export function useTetris(): TetrisController {
         if (softDrop.current) {
           s.score += softDropPoints(1);
           s.breakdown = { ...s.breakdown, regular: s.breakdown.regular + softDropPoints(1) };
+          audioRef.current.play('softDrop');
         }
       }
     } else {
@@ -520,6 +522,7 @@ export function useTetris(): TetrisController {
     softDrop.current = false;
     gravityAcc.current = 0;
     spawnNext(stateRef.current);
+    audioRef.current.stopAllSfx();
     audioRef.current.startMusic();
     commit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -527,8 +530,12 @@ export function useTetris(): TetrisController {
 
   const togglePause = useCallback(() => {
     const s = stateRef.current;
-    if (s.status === 'PLAYING') stateRef.current = transition(s, 'PAUSE');
-    else if (s.status === 'PAUSED') stateRef.current = transition(s, 'RESUME');
+    if (s.status === 'PLAYING') {
+      stateRef.current = transition(s, 'PAUSE');
+      audioRef.current.play('pause');
+    } else if (s.status === 'PAUSED') {
+      stateRef.current = transition(s, 'RESUME');
+    }
     commit();
   }, [commit]);
 
@@ -539,6 +546,7 @@ export function useTetris(): TetrisController {
   const goToMenu = useCallback(() => {
     stateRef.current = createInitialState(prefsRef.current.startLevel, rng.current);
     audioRef.current.stopMusic();
+    audioRef.current.stopAllSfx();
     commit();
   }, [commit]);
 
@@ -580,6 +588,10 @@ export function useTetris(): TetrisController {
 
   const dismissWarning = useCallback(() => setWarning(false), []);
 
+  const playModalOpen = useCallback(() => {
+    audioRef.current.play('modalOpen');
+  }, []);
+
   const softDropStart = useCallback(() => {
     softDrop.current = true;
   }, []);
@@ -608,6 +620,7 @@ export function useTetris(): TetrisController {
     toggleMute,
     clearScores,
     dismissWarning,
+    playModalOpen,
     moveLeft: () => tryShift(-1),
     moveRight: () => tryShift(1),
     rotateCw: () => doRotate(1),

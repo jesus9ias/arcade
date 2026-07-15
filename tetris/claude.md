@@ -98,7 +98,10 @@ If a change contradicts an existing scenario or decision, stop, update the docum
 ## Assets pending (not code)
 
 - **Fonts:** `public/fonts/orbitron.woff2` and `space-grotesk.woff2` (self-hosted per the CSP). `@font-face` in `global.css` references them; the CSS falls back to system fonts until they exist. Fetch fresh from Google Fonts — do not extract from the design bundle.
-- **Audio:** SFX/music `.mp3` under `public/audio/`. `AudioManager` maps events to these paths and swallows missing files, so the mute toggle and event hooks already work.
+
+## Audio assets
+
+SFX/music `.mp3` files under `public/audio/` are in place (Pixabay, free-to-use; see `public/audio/readme.md` for the credits table). `AudioManager` maps events to these paths and swallows missing files, so playback degrades gracefully if a file is ever removed.
 
 ---
 

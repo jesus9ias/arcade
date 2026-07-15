@@ -759,6 +759,22 @@ Feature: Sound
     When the player mutes
     Then no sound effects or music play
     And the muted preference is stored and restored on reload
+
+  Scenario: Soft drop plays a sound
+    Given the game is PLAYING and sound is on
+    When the player soft-drops the active piece
+    Then the soft-drop sound effect plays
+
+  Scenario: Pausing plays a sound
+    Given the game is PLAYING and sound is on
+    When the player pauses
+    Then the pause sound effect plays
+    And resuming does not play a distinct sound
+
+  Scenario: Opening a modal plays a sound
+    Given sound is on
+    When the player opens the controls modal or the scoreboard screen
+    Then the modal-open sound effect plays
 ```
 
 ### Feature: Language
@@ -985,7 +1001,7 @@ After each sub-step run `vitest`; proceed only when covering tests pass.
 
 ### Stage 5 — Audio assets (future; separate authorization)
 
-Wire real audio files into the placeholder hooks from Stage 3: background music (loop) started by a user gesture (autoplay policy), plus SFX for **move, rotate, soft drop, hard drop, lock, line clear, tetris, T-Spin, level-up, hold, bonus/back-to-back, game over**. Assets land under `frontend/public/audio/` (a `.gitkeep` holds the folder until then). No engine/test changes expected.
+Wire real audio files into the placeholder hooks from Stage 3: background music (loop) started by a user gesture (autoplay policy), plus SFX for **move, rotate, soft drop, hard drop, lock, line clear, tetris, T-Spin, level-up, hold, bonus/back-to-back, game over, pause, modal open**. Assets land under `frontend/public/audio/` (a `.gitkeep` holds the folder until then). No engine/test changes expected.
 
 ### Stage 6 — Multiplayer (future; separate authorization; see below)
 
@@ -1030,3 +1046,5 @@ This is **not** built yet and is out of scope until explicitly authorized.
 | 2026-07-10 | "Back-to-Back Bonus 0.5 × Total Line Clears" (credit table) = 0.5 × the action's own credited value | Developer-flagged interpretation; produces the half-line credits, tunable |
 | 2026-07-10 | Combo bonus uses the pre-increment chain count (first clear in a chain scores 0 combo points) | Standard combo semantics; 50 × combo × level |
 | 2026-07-10 | Stage 3 shipped: pure engine + `useTetris` controller + full UI; 52 tests green, `astro check` clean, build OK, browser-verified. Fonts (woff2) and audio (mp3) assets scaffolded with fallbacks, pending real files | Full implementation of the game per this spec |
+| 2026-07-15 | Wired soft-drop SFX (already in scope, previously unwired); added two new SFX events, `pause` (pause only, not resume) and `modalOpen` (shared by ControlsModal and the scoreboard screen) | Developer requested completing the soft-drop hookup and adding pause/modal-open feedback; single shared `modalOpen` event and pause-only trigger confirmed with developer |
+| 2026-07-15 | Real audio assets (all 15 SFX + music, free-to-use Pixabay sources) added under `public/audio/`; credits logged in `public/audio/readme.md` | Stage 5 scope complete — no more placeholder audio |

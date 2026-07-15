@@ -64,7 +64,10 @@ export function App() {
         onTogglePause={c.togglePause}
         onSetLanguage={c.setLanguage}
         onToggleMute={c.toggleMute}
-        onOpenControls={() => setControlsOpen(true)}
+        onOpenControls={() => {
+          setControlsOpen(true);
+          c.playModalOpen();
+        }}
       />
 
       {isIdle && menuScreen === 'scoreboard' ? (
@@ -79,8 +82,14 @@ export function App() {
           startLevel={c.prefs.startLevel}
           onSetStartLevel={c.setStartLevel}
           onPlay={c.start}
-          onOpenScoreboard={() => setMenuScreen('scoreboard')}
-          onOpenControls={() => setControlsOpen(true)}
+          onOpenScoreboard={() => {
+            setMenuScreen('scoreboard');
+            c.playModalOpen();
+          }}
+          onOpenControls={() => {
+            setControlsOpen(true);
+            c.playModalOpen();
+          }}
         />
       ) : (
         <>
