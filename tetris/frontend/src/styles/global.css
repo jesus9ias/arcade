@@ -169,20 +169,31 @@ body {
 }
 
 /* ---- layout ---- */
-.playfield-row {
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
+.game-grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 220px;
+  grid-template-areas: 'hold board next' 'stats board next';
+  column-gap: 24px;
+  row-gap: 18px;
+  align-items: start;
   justify-content: center;
   z-index: 1;
   flex: 1;
+  width: 100%;
 }
-.side-col {
+.grid-area-hold {
+  grid-area: hold;
+}
+.grid-area-stats {
+  grid-area: stats;
+}
+.grid-area-next {
+  grid-area: next;
+}
+.grid-area-board {
+  grid-area: board;
   display: flex;
-  flex-direction: column;
-  gap: 18px;
-  width: 220px;
-  flex-shrink: 0;
+  justify-content: center;
 }
 
 .panel {
@@ -379,6 +390,10 @@ body {
   border-color: var(--yellow);
   color: var(--yellow);
 }
+.round-btn--pause {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
 .pill-btn {
   height: 54px;
   padding: 0 20px;
@@ -547,36 +562,90 @@ table.scores th {
   border-color: var(--cyan);
 }
 
-/* responsive: stack side panels, show touch bar */
+/* responsive: compact HUD row above the board, touch bar right after it */
 @media (max-width: 900px) {
   :root {
-    --cell: min(7.4vw, 26px);
+    --cell: min(6vw, 3.6dvh, 22px);
   }
-  .playfield-row {
-    flex-direction: column;
-    align-items: center;
+  .app {
+    gap: 8px;
+    padding: 8px 12px;
   }
-  .side-col {
-    flex-direction: row;
-    width: auto;
-    max-width: 100%;
-    flex-wrap: wrap;
-    justify-content: center;
+  .wordmark {
+    letter-spacing: 3px;
   }
-  .side-col .panel {
-    flex: 1 1 160px;
+  .header-right {
+    gap: 8px;
   }
+  .game-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: 'hold stats next' 'board board board';
+    column-gap: 8px;
+    row-gap: 10px;
+  }
+  .grid-area-hold .panel,
+  .grid-area-stats .panel,
+  .grid-area-next .panel {
+    padding: 6px;
+    height: 100%;
+  }
+  .panel-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+  }
+
+  /* hold: shrink mini-grid to match the next-piece preview size */
+  .hold-grid {
+    grid-template-columns: repeat(4, 14px);
+    grid-template-rows: repeat(4, 14px);
+    margin: 4px auto;
+  }
+  .to-hold {
+    font-size: 10px;
+  }
+
+  /* stats: level is already shown in the header, so drop the row here */
+  .stat-row:first-child {
+    display: none;
+  }
+  .stat-row {
+    padding: 3px 0;
+  }
+  .stat-key {
+    font-size: 10px;
+  }
+  .stat-val {
+    font-size: 14px;
+  }
+
+  /* next: compact preview shows only the immediate next piece */
   .next-row .next-list {
     display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
     justify-content: center;
   }
-  .next-piece + .next-piece {
-    border-top: none;
-    padding-top: 0;
+  .next-piece ~ .next-piece {
+    display: none;
   }
+
+  /* the header's pause toggle is hard to reach among the other icons here;
+     the touch bar below owns pause on mobile instead */
+  .header-pause {
+    display: none;
+  }
+
   .touchbar {
     display: flex;
+    gap: 8px;
+    padding: 8px;
+  }
+  .round-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 17px;
+  }
+  .pill-btn {
+    height: 44px;
+    padding: 0 14px;
+    font-size: 12px;
   }
 }

@@ -65,6 +65,16 @@ export function TouchControls({ controller }: { controller: TetrisController }) 
       >
         ⤓
       </button>
+      {(controller.state.status === 'PLAYING' || controller.state.status === 'PAUSED') && (
+        <button
+          type="button"
+          className="round-btn round-btn--pause"
+          aria-label={t('controls.pause')}
+          onClick={controller.togglePause}
+        >
+          {controller.state.status === 'PAUSED' ? '▶' : '❚❚'}
+        </button>
+      )}
     </nav>
   );
 }

@@ -93,9 +93,11 @@ export function App() {
         />
       ) : (
         <>
-          <div className="playfield-row">
-            <div className="side-col">
+          <div className="game-grid">
+            <div className="grid-area-hold">
               <HoldPanel hold={state.hold} holdsRemaining={state.holdsRemaining} />
+            </div>
+            <div className="grid-area-stats">
               <StatsPanel
                 level={state.level}
                 score={state.score}
@@ -105,9 +107,11 @@ export function App() {
               />
             </div>
 
-            <Board board={state.board} active={state.active} ghost={c.ghost} overlay={overlay} />
+            <div className="grid-area-board">
+              <Board board={state.board} active={state.active} ghost={c.ghost} overlay={overlay} />
+            </div>
 
-            <div className="side-col">
+            <div className="grid-area-next">
               <NextQueue queue={state.queue} />
             </div>
           </div>

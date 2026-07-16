@@ -37,7 +37,7 @@ Recreated pixel-faithfully from the design reference committed at [`design/Tetri
 - **Right column (200px):** the next-queue panel (`hud.next`; pink border `#ff4d8f`) showing **5** upcoming pieces.
 - **Bottom bar:** touch controls — move left `◀`, rotate `⟳`, move right `▶`, soft drop `▼`, hold (`controls.hold`), and hard drop (`⤓` glyph + `controls.hardDrop`). A **rotate-counterclockwise button `⟲` is added** (design shows only one rotate button; the game needs both directions).
 
-The 1440×900 design is the desktop reference. The layout is **responsive**: on narrow/mobile viewports the three columns reflow (HOLD + next queue collapse into compact bars above/around the board) and the bottom touch bar is the primary input. Exact breakpoints are an implementation detail; the desktop composition above is authoritative for wide screens.
+The 1440×900 design is the desktop reference. The layout is **responsive**: on narrow/mobile viewports (`max-width: 900px`) the three columns reflow into a single compact row above the board — HOLD, the stats panel (level omitted; it stays in the header), and NEXT (showing only the immediate next piece instead of 5) sit side by side — followed by the full-width board and then the touch control bar, so the whole game fits one screen without scrolling. The pause/resume toggle moves from the header (crowded and easy to miss at this width) into the touch control bar, next to hold/hard-drop. Exact breakpoints and compaction details are an implementation detail; the desktop composition above is authoritative for wide screens.
 
 ### Piece palette (single source of truth: `constants/pieces.ts`)
 
@@ -257,7 +257,7 @@ A **controls help modal** (opened from a header/menu control, and offered on the
 | Rotate clockwise | `↑` or `X` | `⟳` button |
 | Rotate counterclockwise | `Z` | `⟲` button |
 | Hold | `C` or `Shift` | hold button (`controls.hold`) |
-| Pause / Resume | `P` or `Esc` | header pause toggle |
+| Pause / Resume | `P` or `Esc` | header pause toggle (desktop); touch control bar toggle (mobile) |
 | Restart (after game over / victory) | `Enter` | on-screen button |
 
 Held `←`/`→` auto-repeat via DAS/ARR. Touch buttons support press-and-hold for movement/soft drop where applicable.
@@ -1048,3 +1048,4 @@ This is **not** built yet and is out of scope until explicitly authorized.
 | 2026-07-10 | Stage 3 shipped: pure engine + `useTetris` controller + full UI; 52 tests green, `astro check` clean, build OK, browser-verified. Fonts (woff2) and audio (mp3) assets scaffolded with fallbacks, pending real files | Full implementation of the game per this spec |
 | 2026-07-15 | Wired soft-drop SFX (already in scope, previously unwired); added two new SFX events, `pause` (pause only, not resume) and `modalOpen` (shared by ControlsModal and the scoreboard screen) | Developer requested completing the soft-drop hookup and adding pause/modal-open feedback; single shared `modalOpen` event and pause-only trigger confirmed with developer |
 | 2026-07-15 | Real audio assets (all 15 SFX + music, free-to-use Pixabay sources) added under `public/audio/`; credits logged in `public/audio/readme.md` | Stage 5 scope complete — no more placeholder audio |
+| 2026-07-15 | Mobile layout reworked: HOLD/stats/NEXT compact into one row above the board (CSS grid areas, same DOM feeding both desktop 3-column and mobile row/board/controls compositions); NEXT shows only the immediate next piece and the stats panel drops its level row on narrow viewports (level stays visible in the header); pause toggle duplicated into the touch control bar (hidden on desktop, where the header toggle remains authoritative) | Developer-provided mockup: previous mobile layout required scrolling past a tall single-column stack (5-piece NEXT panel) to reach the touch controls, and the header pause button was effectively unreachable at narrow widths; developer confirmed showing only 1 next piece and moving pause to the touch bar on mobile |

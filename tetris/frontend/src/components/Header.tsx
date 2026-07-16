@@ -48,7 +48,7 @@ export function Header({
         {(isPlaying || isPaused) && (
           <button
             type="button"
-            className="icon-btn"
+            className="icon-btn header-pause"
             title={t('controls.pause')}
             aria-label={t('controls.pause')}
             onClick={onTogglePause}
