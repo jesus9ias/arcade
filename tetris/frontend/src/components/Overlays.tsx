@@ -1,22 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatScore } from './format';
 
 export function PauseOverlay({
   onResume,
+  onOpenControls,
   onExitToMenu,
+  registerModalClose,
 }: {
   onResume: () => void;
+  onOpenControls: () => void;
   onExitToMenu: () => void;
+  registerModalClose: (close: (() => void) | null) => void;
 }) {
   const { t } = useTranslation();
   const [confirming, setConfirming] = useState(false);
+
+  useEffect(() => {
+    if (!confirming) return;
+    registerModalClose(() => setConfirming(false));
+    return () => registerModalClose(null);
+  }, [confirming, registerModalClose]);
 
   return (
     <div className="overlay overlay--pause">
       <div className="overlay-title overlay-title--cyan">{t('state.paused').toUpperCase()}</div>
       <button type="button" className="btn" onClick={onResume}>
         {t('state.resume').toUpperCase()}
+      </button>
+      <button type="button" className="btn btn--muted" onClick={onOpenControls}>
+        {t('start.controls').toUpperCase()}
       </button>
       <button type="button" className="btn btn--muted" onClick={() => setConfirming(true)}>
         {t('state.menu').toUpperCase()}

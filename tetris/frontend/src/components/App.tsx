@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../i18n/config';
 import { useTetris } from '../lib/state/useTetris';
@@ -23,9 +23,24 @@ export function App() {
   const isIdle = state.status === 'IDLE';
   const remaining = state.levelGoal - state.creditedLines;
 
+  useEffect(() => {
+    if (!controlsOpen) return;
+    c.registerModalClose(() => setControlsOpen(false));
+    return () => c.registerModalClose(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [controlsOpen]);
+
   const overlay =
     state.status === 'PAUSED' ? (
-      <PauseOverlay onResume={c.togglePause} onExitToMenu={c.goToMenu} />
+      <PauseOverlay
+        onResume={c.togglePause}
+        onOpenControls={() => {
+          setControlsOpen(true);
+          c.playModalOpen();
+        }}
+        onExitToMenu={c.goToMenu}
+        registerModalClose={c.registerModalClose}
+      />
     ) : state.status === 'GAME_OVER' ? (
       <GameOverOverlay
         score={state.score}
@@ -76,6 +91,7 @@ export function App() {
           language={c.prefs.language}
           onClear={c.clearScores}
           onBack={() => setMenuScreen('menu')}
+          registerModalClose={c.registerModalClose}
         />
       ) : isIdle ? (
         <StartScreen

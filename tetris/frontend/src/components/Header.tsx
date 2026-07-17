@@ -36,15 +36,17 @@ export function Header({
         </span>
         <LanguageToggle language={language} onSetLanguage={onSetLanguage} />
         <MuteToggle muted={muted} onToggleMute={onToggleMute} />
-        <button
-          type="button"
-          className="icon-btn"
-          title={t('controls.title')}
-          aria-label={t('controls.title')}
-          onClick={onOpenControls}
-        >
-          ?
-        </button>
+        {!isPlaying && !isPaused && (
+          <button
+            type="button"
+            className="icon-btn"
+            title={t('controls.title')}
+            aria-label={t('controls.title')}
+            onClick={onOpenControls}
+          >
+            ?
+          </button>
+        )}
         {(isPlaying || isPaused) && (
           <button
             type="button"

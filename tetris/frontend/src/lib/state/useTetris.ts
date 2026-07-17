@@ -74,6 +74,7 @@ export interface TetrisController {
   clearScores: () => void;
   dismissWarning: () => void;
   playModalOpen: () => void;
+  registerModalClose: (close: (() => void) | null) => void;
   moveLeft: () => void;
   moveRight: () => void;
   rotateCw: () => void;
@@ -103,6 +104,10 @@ export function useTetris(): TetrisController {
   const gravityAcc = useRef(0);
   const lastRotation = useRef(false);
   const lastKickIndex = useRef(0);
+  // The close handler of whichever modal is currently open, if any. Escape
+  // closes it instead of toggling pause; P/Escape both ignore pause-toggling
+  // while a modal would otherwise be left open behind a resumed game.
+  const topModalCloseRef = useRef<(() => void) | null>(null);
 
   const commit = useCallback(() => {
     stateRef.current = { ...stateRef.current };
@@ -487,8 +492,11 @@ export function useTetris(): TetrisController {
           break;
         case 'p':
         case 'P':
+          if (!topModalCloseRef.current) togglePause();
+          break;
         case 'Escape':
-          togglePause();
+          if (topModalCloseRef.current) topModalCloseRef.current();
+          else togglePause();
           break;
         case 'Enter':
           if (s.status === 'GAME_OVER' || s.status === 'VICTORY') restart();
@@ -592,6 +600,10 @@ export function useTetris(): TetrisController {
     audioRef.current.play('modalOpen');
   }, []);
 
+  const registerModalClose = useCallback((close: (() => void) | null) => {
+    topModalCloseRef.current = close;
+  }, []);
+
   const softDropStart = useCallback(() => {
     softDrop.current = true;
   }, []);
@@ -621,6 +633,7 @@ export function useTetris(): TetrisController {
     clearScores,
     dismissWarning,
     playModalOpen,
+    registerModalClose,
     moveLeft: () => tryShift(-1),
     moveRight: () => tryShift(1),
     rotateCw: () => doRotate(1),

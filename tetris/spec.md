@@ -246,7 +246,7 @@ Rules:
 
 ## Controls
 
-A **controls help modal** (opened from a header/menu control, and offered on the start screen) documents the full mapping. Rendered outside the game FSM like the pause overlay.
+A **controls help modal** documents the full mapping. Rendered outside the game FSM like the pause overlay. It is reachable from the header **?** icon and the start screen only while `IDLE` (and, harmlessly, from the header while `GAME_OVER`/`VICTORY`, since no piece is falling there); the header icon is **hidden while `PLAYING` or `PAUSED`**, and the **only** way to open it during a run is the "Controls" button inside the pause overlay (below Resume) — a piece can never be falling behind the modal.
 
 | Action | Keyboard | Touch |
 |---|---|---|
@@ -261,6 +261,8 @@ A **controls help modal** (opened from a header/menu control, and offered on the
 | Restart (after game over / victory) | `Enter` | on-screen button |
 
 Held `←`/`→` auto-repeat via DAS/ARR. Touch buttons support press-and-hold for movement/soft drop where applicable.
+
+**Escape key priority.** `Esc` closes the topmost open modal (controls help, the pause-overlay exit-confirm, the scoreboard clear-history confirm) instead of toggling pause; only when no modal is open does `Esc` (or `P`) toggle pause. This applies to `P` too — while a modal is open, `P` is ignored rather than silently resuming the game behind it. The controller (`useTetris`) owns this via a single "current modal close handler" ref that components register while their modal is mounted.
 
 ---
 
@@ -1072,3 +1074,4 @@ This is **not** built yet and is out of scope until explicitly authorized.
 | 2026-07-15 | Real audio assets (all 15 SFX + music, free-to-use Pixabay sources) added under `public/audio/`; credits logged in `public/audio/readme.md` | Stage 5 scope complete — no more placeholder audio |
 | 2026-07-15 | Mobile layout reworked: HOLD/stats/NEXT compact into one row above the board (CSS grid areas, same DOM feeding both desktop 3-column and mobile row/board/controls compositions); NEXT shows only the immediate next piece and the stats panel drops its level row on narrow viewports (level stays visible in the header); pause toggle duplicated into the touch control bar (hidden on desktop, where the header toggle remains authoritative) | Developer-provided mockup: previous mobile layout required scrolling past a tall single-column stack (5-piece NEXT panel) to reach the touch controls, and the header pause button was effectively unreachable at narrow widths; developer confirmed showing only 1 next piece and moving pause to the touch bar on mobile |
 | 2026-07-16 | Added an "exit to menu" button below Resume in the pause overlay, guarded by a confirmation modal (run is lost, not saved) | Developer request; reuses the existing `goToMenu` action (same one game-over/victory already use) and the scoreboard's confirm-modal pattern (`modal-backdrop`/`card`), so no FSM or locked-test changes were needed |
+| 2026-07-16 | Fixed: opening the controls modal during `PLAYING` didn't pause the game (piece kept falling behind it); opening it during `PAUSED` left it open if `Esc` was pressed, since `Esc` was hardwired to `togglePause` with no awareness of open modals. Fix: (1) the header's controls icon is now hidden during `PLAYING`/`PAUSED` — a "Controls" button was added to the pause overlay (below Resume, above the exit-to-menu button) as the only in-run entry point, so a modal can never open over a live board; (2) `useTetris` now owns a single "open modal's close handler" ref via `registerModalClose`, which every modal (controls, pause-exit-confirm, scoreboard clear-confirm) registers while mounted — `Esc` closes that modal instead of toggling pause, and `P` is ignored rather than resuming behind it, when one is open | Developer-reported bug + design proposal (move Controls into the pause overlay, make `Esc` universally close-topmost-modal-first); keeps the "controller owns all input" invariant (`tetris/claude.md`) — modal/pause-key priority lives in `useTetris`, not scattered across components |

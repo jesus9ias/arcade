@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDate, formatDuration, formatScore } from './format';
 import { HISTORY_PAGE_SIZE } from '../lib/constants/storage';
@@ -9,12 +9,19 @@ interface Props {
   language: string;
   onClear: () => void;
   onBack: () => void;
+  registerModalClose: (close: (() => void) | null) => void;
 }
 
-export function Scoreboard({ scores, language, onClear, onBack }: Props) {
+export function Scoreboard({ scores, language, onClear, onBack, registerModalClose }: Props) {
   const { t } = useTranslation();
   const [page, setPage] = useState(0);
   const [confirming, setConfirming] = useState(false);
+
+  useEffect(() => {
+    if (!confirming) return;
+    registerModalClose(() => setConfirming(false));
+    return () => registerModalClose(null);
+  }, [confirming, registerModalClose]);
 
   const pageCount = Math.max(1, Math.ceil(scores.records.length / HISTORY_PAGE_SIZE));
   const current = Math.min(page, pageCount - 1);
