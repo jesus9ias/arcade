@@ -25,7 +25,7 @@ export function App() {
 
   const overlay =
     state.status === 'PAUSED' ? (
-      <PauseOverlay onResume={c.togglePause} />
+      <PauseOverlay onResume={c.togglePause} onExitToMenu={c.goToMenu} />
     ) : state.status === 'GAME_OVER' ? (
       <GameOverOverlay
         score={state.score}

@@ -25,7 +25,10 @@
     "retry": "Reintentar",
     "victory": "¡Ganaste!",
     "victoryBody": "Completaste los 15 niveles.",
-    "menu": "Menú principal"
+    "menu": "Menú principal",
+    "exitConfirm": "¿Salir al menú principal? Se perderá la partida actual sin guardar el resultado.",
+    "exitConfirmYes": "Salir",
+    "exitConfirmNo": "Cancelar"
   },
   "controls": {
     "title": "Controles",

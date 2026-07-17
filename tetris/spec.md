@@ -415,6 +415,10 @@ Both `en.json` and `es.json` carry identical, non-empty key sets. Illustrative (
   "state.retry": "Retry",
   "state.victory": "You win!",
   "state.victoryBody": "You cleared all 15 levels.",
+  "state.menu": "Main menu",
+  "state.exitConfirm": "Exit to the main menu? The current run will be lost and not saved.",
+  "state.exitConfirmYes": "Exit",
+  "state.exitConfirmNo": "Cancel",
 
   "controls.title": "Controls",
   "controls.moveLeft": "Move left",
@@ -722,6 +726,24 @@ Feature: Pause
     Given the game is PAUSED
     When the player resumes
     Then the game is PLAYING again
+
+  Scenario: Exit to menu from pause requires confirmation
+    Given the game is PAUSED
+    When the player selects "exit to menu"
+    Then a confirmation dialog is shown warning the run will be lost and not saved
+    And the game remains PAUSED until the player responds
+
+  Scenario: Confirming exit returns to the start screen
+    Given the exit confirmation dialog is open
+    When the player confirms
+    Then the game returns to IDLE
+    And the in-progress run is discarded without being recorded
+
+  Scenario: Cancelling exit keeps the run paused
+    Given the exit confirmation dialog is open
+    When the player cancels
+    Then the dialog closes
+    And the game remains PAUSED
 ```
 
 ### Feature: Scoreboard / history
@@ -1049,3 +1071,4 @@ This is **not** built yet and is out of scope until explicitly authorized.
 | 2026-07-15 | Wired soft-drop SFX (already in scope, previously unwired); added two new SFX events, `pause` (pause only, not resume) and `modalOpen` (shared by ControlsModal and the scoreboard screen) | Developer requested completing the soft-drop hookup and adding pause/modal-open feedback; single shared `modalOpen` event and pause-only trigger confirmed with developer |
 | 2026-07-15 | Real audio assets (all 15 SFX + music, free-to-use Pixabay sources) added under `public/audio/`; credits logged in `public/audio/readme.md` | Stage 5 scope complete — no more placeholder audio |
 | 2026-07-15 | Mobile layout reworked: HOLD/stats/NEXT compact into one row above the board (CSS grid areas, same DOM feeding both desktop 3-column and mobile row/board/controls compositions); NEXT shows only the immediate next piece and the stats panel drops its level row on narrow viewports (level stays visible in the header); pause toggle duplicated into the touch control bar (hidden on desktop, where the header toggle remains authoritative) | Developer-provided mockup: previous mobile layout required scrolling past a tall single-column stack (5-piece NEXT panel) to reach the touch controls, and the header pause button was effectively unreachable at narrow widths; developer confirmed showing only 1 next piece and moving pause to the touch bar on mobile |
+| 2026-07-16 | Added an "exit to menu" button below Resume in the pause overlay, guarded by a confirmation modal (run is lost, not saved) | Developer request; reuses the existing `goToMenu` action (same one game-over/victory already use) and the scoreboard's confirm-modal pattern (`modal-backdrop`/`card`), so no FSM or locked-test changes were needed |

@@ -25,7 +25,10 @@
     "retry": "Retry",
     "victory": "You win!",
     "victoryBody": "You cleared all 15 levels.",
-    "menu": "Main menu"
+    "menu": "Main menu",
+    "exitConfirm": "Exit to the main menu? The current run will be lost and not saved.",
+    "exitConfirmYes": "Exit",
+    "exitConfirmNo": "Cancel"
   },
   "controls": {
     "title": "Controls",
