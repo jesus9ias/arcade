@@ -11,6 +11,7 @@ const { PUBLIC_SITE_URL } = loadEnv(
 
 // https://astro.build/config
 export default defineConfig({
+  server: { port: 4324 },
   site: PUBLIC_SITE_URL,
   integrations: [react()],
 });
